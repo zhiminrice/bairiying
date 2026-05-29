@@ -1,0 +1,22 @@
+{
+  "name": "bairiying",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI时代为人父母·百日实践营 - 学员管理系统",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "migrate": "cd backend && npx knex migrate:latest",
+    "seed": "cd backend && npx knex seed:run",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:rebuild": "docker compose up -d --build",
+    "backup": "bash scripts/backup.sh"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

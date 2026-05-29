@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  bairiying:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.prod
+    container_name: bairiying
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    volumes:
+      - bairiying_data:/app/data
+      - ./backups:/app/backups
+    environment:
+      PORT: 3001
+      NODE_ENV: production
+      CORS_ORIGIN: "*"
+      JWT_SECRET: ${JWT_SECRET:-bairiying-secret-change-me}
+
+volumes:
+  bairiying_data:

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>百日营学员管理系统 - 内测入口</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f9f7f4;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 20px;
+  }
+  .container {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 40px 32px;
+    max-width: 480px; width: 100%;
+    text-align: center;
+  }
+  h1 { font-size: 22px; color: #2c2824; margin-bottom: 8px; }
+  .subtitle { font-size: 14px; color: #8c8580; margin-bottom: 28px; }
+  .btn {
+    display: block; width: 100%;
+    padding: 14px; margin-bottom: 12px;
+    border-radius: 12px; border: none;
+    font-size: 16px; font-weight: 600; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: #3b6e8f; color: #fff; }
+  .btn-primary:hover { background: #254e68; }
+  .btn-secondary { background: #e8f1f7; color: #3b6e8f; }
+  .accounts {
+    margin-top: 28px; padding-top: 24px;
+    border-top: 1px solid #e8e4de;
+    text-align: left;
+  }
+  .accounts h3 { font-size: 14px; color: #2c2824; margin-bottom: 12px; }
+  .account-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px; margin-bottom: 6px;
+    background: #f9f7f4; border-radius: 10px;
+  }
+  .account-row .role { font-size: 13px; color: #3b6e8f; font-weight: 500; }
+  .account-row .creds { font-size: 12px; color: #8c8580; }
+  .account-row .creds code { background: #e8f1f7; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+  .tip { margin-top: 20px; font-size: 12px; color: #c48a3f; background: #fef9f0; padding: 10px 14px; border-radius: 10px; text-align: left; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🌱 百日营学员管理系统</h1>
+  <p class="subtitle">AI时代为人父母 · 内测入口</p>
+
+  <button class="btn btn-primary" onclick="openSystem()">进入系统</button>
+  <button class="btn btn-secondary" onclick="navigator.clipboard.writeText('admin@bairiying.com')">📋 复制管理员账号</button>
+
+  <div class="accounts">
+    <h3>🔑 测试账号</h3>
+    <div class="account-row">
+      <span class="role">管理员</span>
+      <span class="creds"><code>admin@bairiying.com</code> / <code>admin123</code></span>
+    </div>
+    <div class="account-row">
+      <span class="role">组长</span>
+      <span class="creds"><code>13800000001</code> / <code>leader123</code></span>
+    </div>
+    <div class="account-row">
+      <span class="role">讲师</span>
+      <span class="creds"><code>13900000001</code> / <code>123456</code></span>
+    </div>
+  </div>
+
+  <div class="tip">
+    ⚠️ 首次打开会先看到安全提醒页面<br>
+    → 点击【Click to Continue】按钮<br>
+    → 即可正常进入系统
+  </div>
+</div>
+
+<script>
+function openSystem() {
+  // localtunnel bypass: open with anchor that triggers the bypass
+  window.open('https://tricky-seals-sing.loca.lt', '_blank');
+}
+</script>
+</body>
+</html>

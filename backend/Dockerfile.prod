@@ -1,0 +1,25 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# 1. 安装依赖
+COPY backend/package*.json ./
+RUN npm ci --only=production && npm install better-sqlite3 --save
+
+# 2. 复制后端源码
+COPY backend/src/ ./src/
+COPY backend/knexfile.js ./
+COPY backend/migrations/ ./migrations/
+COPY backend/seeds/ ./seeds/
+
+# 3. 复制前端构建产物（需先在本地 build）
+COPY frontend/dist/ ./public/
+
+# 4. 生成 JWT 密钥
+RUN echo "JWT_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 32)" > .env
+
+# 5. 暴露端口
+EXPOSE 3001
+
+# 6. 启动：自动迁移 + 种子 + 启动服务
+CMD ["sh", "-c", "npx knex migrate:latest && npx knex seed:run && node src/server.js"]
