@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>百日营3组 · 学员管理系统</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f9f7f4;
+  --card: #ffffff;
+  --text: #2c2824;
+  --muted: #8c8580;
+  --accent: #3b6e8f;
+  --accent-light: #e8f1f7;
+  --accent-dark: #254e68;
+  --success: #4a9c7c;
+  --success-bg: #eaf6f1;
+  --warning: #c48a3f;
+  --warning-bg: #fdf3e4;
+  --danger: #b84a4a;
+  --danger-bg: #fdf0f0;
+  --border: #e8e4de;
+  --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 2px 8px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.10);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', 'Noto Serif SC', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+/* --- Noise Texture Overlay --- */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+
+/* --- Header --- */
+header {
+  position: relative; z-index: 1;
+  padding: 28px 40px 0;
+  max-width: 1400px; margin: 0 auto;
+}
+.header-top {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  padding-bottom: 20px; border-bottom: 1px solid var(--border);
+}
+.logo-area h1 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 28px; font-weight: 700; color: var(--text);
+  letter-spacing: 0.02em;
+}
+.logo-area .subtitle {
+  font-size: 13px; color: var(--muted); margin-top: 4px; font-weight: 500;
+}
+.stats-bar {
+  display: flex; gap: 28px; align-items: center;
+}
+.stat-item { text-align: right; }
+.stat-item .num {
+  font-size: 26px; font-weight: 700; color: var(--accent);
+  line-height: 1;
+}
+.stat-item .label {
+  font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 500;
+}
+
+/* --- Main Content --- */
+main {
+  position: relative; z-index: 1;
+  max-width: 1400px; margin: 0 auto; padding: 24px 40px 60px;
+}
+
+/* --- Toolbar --- */
+.toolbar {
+  display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; align-items: center;
+}
+.filter-btn {
+  padding: 8px 18px; border-radius: 20px; border: 1.5px solid var(--border);
+  background: var(--card); font-size: 13px; cursor: pointer; transition: var(--transition);
+  font-weight: 500; color: var(--muted); font-family: inherit;
+}
+.filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+.filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.search-box {
+  margin-left: auto; position: relative;
+}
+.search-box input {
+  padding: 8px 14px 8px 34px; border-radius: 20px; border: 1.5px solid var(--border);
+  font-size: 13px; outline: none; width: 200px; background: var(--card);
+  transition: var(--transition); font-family: inherit;
+}
+.search-box input:focus { border-color: var(--accent); width: 240px; }
+.search-box::before {
+  content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  font-size: 12px; pointer-events: none;
+}
+
+/* --- Member Grid --- */
+.member-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 18px;
+}
+.member-card {
+  background: var(--card); border-radius: var(--radius); padding: 22px;
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+  cursor: pointer; transition: var(--transition); position: relative; overflow: hidden;
+}
+.member-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.member-card.unstarted { border-left: 3px solid var(--danger); }
+.member-card.active-member { border-left: 3px solid var(--success); }
+.member-card.partial { border-left: 3px solid var(--warning); }
+
+.card-header {
+  display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;
+}
+.card-name {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 20px; font-weight: 700;
+}
+.card-badge {
+  padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
+}
+.badge-leader { background: var(--accent-light); color: var(--accent); }
+.badge-member { background: var(--border); color: var(--muted); }
+.card-region { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* Progress bars */
+.progress-section { margin-bottom: 12px; }
+.progress-row {
+  display: flex; align-items: center; margin-bottom: 8px; gap: 8px;
+}
+.progress-label {
+  font-size: 12px; color: var(--muted); width: 56px; flex-shrink: 0; font-weight: 500;
+}
+.progress-track {
+  flex: 1; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+.progress-fill.high { background: var(--success); }
+.progress-fill.medium { background: var(--warning); }
+.progress-fill.low { background: var(--danger); }
+.progress-fill.zero { background: #e0dcd6; }
+.progress-num {
+  font-size: 12px; font-weight: 600; width: 36px; text-align: right; flex-shrink: 0;
+}
+
+/* --- Detail Panel --- */
+.detail-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100;
+  display: flex; align-items: center; justify-content: center; padding: 40px;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.detail-panel {
+  background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  max-width: 720px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 36px;
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.detail-panel h2 {
+  font-family: 'Noto Serif SC', serif; font-size: 24px; margin-bottom: 6px;
+}
+.detail-panel .detail-meta { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+.detail-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border);
+}
+.detail-stat {
+  text-align: center; padding: 14px 8px; background: var(--bg); border-radius: var(--radius-sm);
+}
+.detail-stat .ds-num { font-size: 22px; font-weight: 700; color: var(--accent); }
+.detail-stat .ds-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.detail-assignments h3 {
+  font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.assignment-item {
+  padding: 14px 16px; background: var(--bg); border-radius: var(--radius-sm);
+  margin-bottom: 10px; border-left: 3px solid var(--accent);
+}
+.assignment-item .ai-date { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.assignment-item .ai-content { font-size: 13px; line-height: 1.7; }
+.assignment-item .ai-feedback {
+  margin-top: 8px; padding: 8px 12px; background: var(--warning-bg);
+  border-radius: 6px; font-size: 12px; color: var(--warning); font-weight: 500;
+}
+.close-btn {
+  position: absolute; top: 16px; right: 16px;
+  width: 32px; height: 32px; border-radius: 50%; border: none;
+  background: var(--bg); cursor: pointer; font-size: 16px; transition: var(--transition);
+  display: flex; align-items: center; justify-content: center;
+}
+.close-btn:hover { background: var(--border); }
+
+/* --- Attendance Table (in a bottom section) --- */
+.section-title {
+  font-family: 'Noto Serif SC', serif; font-size: 22px; margin: 36px 0 18px;
+  font-weight: 700;
+}
+.att-table-wrapper { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+.att-table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--card); }
+.att-table th {
+  background: var(--accent-light); color: var(--accent-dark); font-weight: 600;
+  padding: 12px 10px; text-align: center; font-size: 12px;
+}
+.att-table td { padding: 10px; text-align: center; border-bottom: 1px solid var(--border); }
+.att-table .col-date { text-align: left; padding-left: 16px; font-weight: 500; }
+.att-table .at-yes { color: var(--success); font-weight: 700; font-size: 16px; }
+.att-table .at-no { color: var(--danger); font-weight: 700; font-size: 16px; }
+.att-table .at-empty { color: #d0ccc4; }
+.att-table tr:hover td { background: var(--bg); }
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  header, main { padding: 20px 18px; }
+  .header-top { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .stats-bar { width: 100%; justify-content: flex-start; flex-wrap: wrap; gap: 18px; }
+  .member-grid { grid-template-columns: 1fr; }
+  .detail-panel { padding: 24px; max-width: 100%; }
+  .detail-stats { grid-template-columns: repeat(2, 1fr); }
+  .search-box input { width: 140px; }
+  .search-box input:focus { width: 180px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo-area">
+      <h1>百日营3组 · 学员管理</h1>
+      <p class="subtitle">开营 2026/5/21 · 组长 钟智敏 · 第1周</p>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-item"><div class="num" id="statActive">4</div><div class="label">活跃学员</div></div>
+      <div class="stat-item"><div class="num" id="statInactive">3</div><div class="label">未启动</div></div>
+      <div class="stat-item"><div class="num" id="statRate">78%</div><div class="label">出勤率</div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="toolbar">
+    <button class="filter-btn active" data-filter="all">全部</button>
+    <button class="filter-btn" data-filter="active">活跃</button>
+    <button class="filter-btn" data-filter="partial">部分参与</button>
+    <button class="filter-btn" data-filter="unstarted">未启动</button>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="搜索学员姓名...">
+    </div>
+  </div>
+
+  <div class="member-grid" id="memberGrid"></div>
+
+  <h2 class="section-title">上课出勤记录</h2>
+  <div class="att-table-wrapper">
+    <table class="att-table" id="attTable"></table>
+  </div>
+</main>
+
+<script>
+// ============================================================
+// REAL DATA FROM 百日营3组学习跟踪表.xlsx — 2026-05-28
+// ============================================================
+const MEMBERS = [
+  { name:"钟智敏", region:"东莞", gender:"女", referee:"吕文婷", isLeader:true, awareness:3, awarenessTotal:4, homework:1, homeworkTotal:1, practice:1, practiceTotal:1, attendance:1, shouldAttend:1, status:"优秀，继续保持！" },
+  { name:"尤夏靖", region:"东莞", gender:"女", referee:"广州心康达", isLeader:false, awareness:0, awarenessTotal:4, homework:0, homeworkTotal:1, practice:0, practiceTotal:1, attendance:0, shouldAttend:1, status:"⚠ 还未开始" },
+  { name:"王碧娟", region:"东莞", gender:"女", referee:"尤夏靖", isLeader:false, awareness:0, awarenessTotal:4, homework:1, homeworkTotal:1, practice:0, practiceTotal:1, attendance:1, shouldAttend:1, status:"已起步，加油！" },
+  { name:"黄学隆", region:"东莞", gender:"男", referee:"广州心康达", isLeader:false, awareness:0, awarenessTotal:4, homework:1, homeworkTotal:1, practice:0, practiceTotal:1, attendance:1, shouldAttend:1, status:"优秀，继续保持！" },
+  { name:"郑诗韵", region:"东莞", gender:"女", referee:"尤夏靖", isLeader:false, awareness:0, awarenessTotal:4, homework:0, homeworkTotal:1, practice:0, practiceTotal:1, attendance:1, shouldAttend:1, status:"⚠ 还未开始" },
+  { name:"郑柳", region:"东莞", gender:"女", referee:"吕文婷", isLeader:false, awareness:3, awarenessTotal:4, homework:0, homeworkTotal:1, practice:1, practiceTotal:1, attendance:1, shouldAttend:1, status:"已起步，加油！" },
+  { name:"莫燕青", region:"广西", gender:"女", referee:"广西心康达", isLeader:false, awareness:3, awarenessTotal:4, homework:1, homeworkTotal:1, practice:0, practiceTotal:1, attendance:1, shouldAttend:1, status:"优秀，继续保持！" },
+  { name:"刘师", region:"贺州", gender:"男", referee:"曾琦", isLeader:false, awareness:0, awarenessTotal:4, homework:0, homeworkTotal:1, practice:0, practiceTotal:1, attendance:1, shouldAttend:1, status:"⚠ 还未开始" },
+  { name:"王璐璐", region:"广州", gender:"女", referee:"广州心康达", isLeader:false, awareness:0, awarenessTotal:4, homework:0, homeworkTotal:1, practice:1, practiceTotal:1, attendance:1, shouldAttend:1, status:"已起步，加油！" }
+];
+
+const ASSIGNMENTS = [
+  { date:"2026-05-27", name:"\u949f\u667a\u654f", hwDate:"5/21", content:`商场地下停车场，被孩子的争吵引爆…完整觉察。`, note:"\u6bcf\u65e5\u89c9\u5bdf", feedback:`完整觉察+溯源` },
+  { date:"2026-05-27", name:"\u949f\u667a\u654f", hwDate:"5/22", content:`妹妹多一颗糖，儿子立刻要一样的——「公平使者」照见执拗追问公平的自己。`, note:"\u6bcf\u65e5\u89c9\u5bdf", feedback:`育儿=自我重逢` },
+  { date:"2026-05-27", name:"\u949f\u667a\u654f", hwDate:"5/23", content:`从孩子不爱看大段文字，看见自己也不喜繁琐。`, note:"\u6bcf\u65e5\u89c9\u5bdf", feedback:`` },
+  { date:"2026-05-27", name:"\u949f\u667a\u654f", hwDate:"5/25 \u4f5c\u4e1a", content:`桌游冲突→儿子暴怒→倾听→修复。`, note:"\u672c\u5468\u4f5c\u4e1a", feedback:`优秀范例` },
+  { date:"2026-05-28", name:"\u949f\u667a\u654f", hwDate:"5/25 \u8df5\u884c", content:`前天女儿独自在二楼弹奏乐曲，我在一楼安然品茶。琴声落下，我出声唤她，并用掌声回应她的演奏，说出她弹奏的曲目《Remember Me》。儿子在一旁露出惊喜的笑容，女儿则满心欢喜地冲下楼抱住了我。深深体会到：欣赏与肯定，是最动人的力量。`, note:"\u6bcf\u65e5\u8df5\u884c", feedback:`` },
+  { date:"2026-05-27", name:"\u90d1\u67f3", hwDate:"5/21", content:`每晚十点孩子未睡就焦虑催促…明知不必却次次重复。`, note:"\u6bcf\u65e5\u89c9\u5bdf", feedback:`` },
+  { date:"2026-05-27", name:"\u90d1\u67f3", hwDate:"5/22", content:`送孩子上学迟到失约，执念守信遇变内耗，影响孩子。`, note:"\u6bcf\u65e5\u89c9\u5bdf", feedback:`清晰照镜子` },
+  { date:"2026-05-27", name:"\u90d1\u67f3", hwDate:"5/23", content:`陪孩子玩复杂规则游戏，孩子失去兴趣——不喜复杂的心性一模一样。`, note:"\u6bcf\u65e5\u89c9\u5bdf", feedback:`` },
+  { date:"2026-05-27", name:"\u90d1\u67f3", hwDate:"5/25 \u8df5\u884c", content:`陪孩子学戴OK镜，耐心共情代替催促。孩子主动讲解，眼里满是自信。`, note:"\u6bcf\u65e5\u8df5\u884c", feedback:`践行满分` },
+  { date:"2026-05-28", name:"\u90d1\u67f3", hwDate:"5/25 \u8df5\u884c", content:`今晚接上完晚辅的孩子回家，路上二十分钟独处时光特别欢乐。孩子一路分享学校里的趣事，我们聊得不亦乐乎，哈哈大笑，相处就像朋友一样。我全程认真倾听、积极接话、互动回应、多多鼓励。亲子关系也越来越融洽啦。`, note:"\u6bcf\u65e5\u8df5\u884c", feedback:`` },
+  { date:"2026-05-27", name:"\u83ab\u71d5\u9752", hwDate:"5/21", content:`下班后累、沉默、关门躺平…知道要改变但做不到。`, note:"\u6bcf\u65e5\u89c9\u5bdf", feedback:`能量枯竭，需关注` },
+  { date:"2026-05-27", name:"\u83ab\u71d5\u9752", hwDate:"5/22", content:`二儿子要喝糖水被拒后打哥哥…自己无力反抗回避。`, note:"\u6bcf\u65e5\u89c9\u5bdf", feedback:`⚠ 暴力代际传递` },
+  { date:"2026-05-27", name:"\u83ab\u71d5\u9752", hwDate:"5/23", content:`孩子写作业拖拉，看到自己不想接任务、不想担压力的影子。`, note:"\u6bcf\u65e5\u89c9\u5bdf", feedback:`从孩子身上看到自己` },
+  { date:"2026-05-27", name:"\u83ab\u71d5\u9752", hwDate:"5/25 \u4f5c\u4e1a", content:`老大在校外被大男孩打、抢自行车…小时哥哥也被打，帮不了。三代创伤。`, note:"\u672c\u5468\u4f5c\u4e1a", feedback:`⚠ 重点跟进` },
+  { date:"2026-05-27", name:"\u9ec4\u5b66\u9686", hwDate:"5/25 \u4f5c\u4e1a", content:`儿子让拿袜子→发火→觉察：6岁被罚站的恐惧投射。`, note:"\u672c\u5468\u4f5c\u4e1a", feedback:`第一篇，质量高` },
+  { date:"2026-05-27", name:"\u738b\u78a7\u5a1f", hwDate:"5/25 \u4f5c\u4e1a", content:`搬家情绪崩溃：老公缺席→不被重视→对女儿发火→被女儿一句话点醒。`, note:"\u672c\u5468\u4f5c\u4e1a", feedback:`情绪前置→投射→孩子反照` },
+  { date:"2026-05-28", name:"\u738b\u7490\u7490", hwDate:"5/25 \u8df5\u884c", content:`女儿兴奋地邀请我观看她玩赛车游戏。屏幕里的『糖果世界』色彩缤纷，像进入了一个梦幻童话。她认真对我说：「妈妈，我之前写的《糖果世界》的作文，就是从这里得到灵感的。」原来大人眼里的「游戏」，却是孩子通往想象力的大门。后来冲刺时女儿特别紧张，我也跟着一起紧张，当她冲过终点拿第一时，她激动得跳起来欢呼！我也发自内心地和她一起欢呼鼓掌。`, note:"\u6bcf\u65e5\u8df5\u884c", feedback:`` },
+  { date:"2026-05-28", name:"\u738b\u7490\u7490", hwDate:"5/25 \u8df5\u884c", content:`女儿得知六一不用上课后，问我能不能穿新买的cosplay衣服连续穿两天。她说想去炸街，还让我看看能不能请化妆师帮她化妆。我对她的想法表示支持。她说自己来化妆，我帮她找了化妆视频。女儿总有奇思妙想，能得到家人的支持，是她继续做这些事情的动力。`, note:"\u6bcf\u65e5\u8df5\u884c", feedback:`` }
+];
+
+const ATTENDANCE = [
+  { week:"第1周", date:"05/25（周一）", "钟智敏":"✓","尤夏靖":"✗","王碧娟":"✓","黄学隆":"✓","郑诗韵":"✓","郑柳":"✓","莫燕青":"✓","刘师":"✓","王璐璐":"✓" },
+  { week:"第2周", date:"06/01（周一）", "钟智敏":"","尤夏靖":"","王碧娟":"","黄学隆":"","郑诗韵":"","郑柳":"","莫燕青":"","刘师":"","王璐璐":"" },
+];
+
+// ============================================================
+// HELPER: categorize member
+// ============================================================
+function category(m) {
+  const total = m.awareness + m.homework + m.practice;
+  if (total === 0 && m.attendance === 0) return 'unstarted';
+  if (total >= 3) return 'active';
+  return 'partial';
+}
+function progressPct(done, total) { return total ? Math.round((done/total)*100) : 0; }
+function progressClass(pct) {
+  if (pct >= 80) return 'high';
+  if (pct >= 40) return 'medium';
+  if (pct > 0) return 'low';
+  return 'zero';
+}
+
+// ============================================================
+// RENDER: member cards
+// ============================================================
+const grid = document.getElementById('memberGrid');
+let currentFilter = 'all';
+let searchQuery = '';
+
+function renderMembers() {
+  grid.innerHTML = '';
+  let activeCount = 0, inactiveCount = 0, attendedCount = 0;
+  MEMBERS.forEach(m => {
+    const cat = category(m);
+    if (cat === 'active') activeCount++;
+    if (cat === 'unstarted') inactiveCount++;
+    if (m.attendance > 0) attendedCount++;
+
+    // filter
+    if (currentFilter !== 'all' && cat !== currentFilter) return;
+    if (searchQuery && !m.name.includes(searchQuery)) return;
+
+    const card = document.createElement('div');
+    card.className = `member-card ${cat === 'unstarted' ? 'unstarted' : cat === 'active' ? 'active-member' : 'partial'}`;
+    card.onclick = () => showDetail(m);
+
+    const aPct = progressPct(m.awareness, m.awarenessTotal);
+    const hPct = progressPct(m.homework, m.homeworkTotal);
+    const pPct = progressPct(m.practice, m.practiceTotal);
+    const atPct = progressPct(m.attendance, m.shouldAttend);
+
+    card.innerHTML = `
+      <div class="card-header">
+        <div>
+          <div class="card-name">${m.name}</div>
+          <div class="card-region">${m.region} · ${m.gender === '男' ? '♂' : '♀'} · 推荐人：${m.referee}</div>
+        </div>
+        <span class="card-badge ${m.isLeader ? 'badge-leader' : 'badge-member'}">${m.isLeader ? '组长' : '组员'}</span>
+      </div>
+      <div class="progress-section">
+        ${makeProgress('每日觉察', m.awareness, m.awarenessTotal, aPct)}
+        ${makeProgress('本周作业', m.homework, m.homeworkTotal, hPct)}
+        ${makeProgress('每日践行', m.practice, m.practiceTotal, pPct)}
+        ${makeProgress('上课出勤', m.attendance, m.shouldAttend, atPct)}
+      </div>
+      <div style="font-size:12px; color:var(--muted); margin-top:4px;">${m.status}</div>
+    `;
+    grid.appendChild(card);
+  });
+
+  document.getElementById('statActive').textContent = activeCount;
+  document.getElementById('statInactive').textContent = inactiveCount;
+  const attRate = MEMBERS.length ? Math.round((attendedCount/MEMBERS.length)*100) : 0;
+  document.getElementById('statRate').textContent = attRate + '%';
+}
+
+function makeProgress(label, done, total, pct) {
+  return `
+    <div class="progress-row">
+      <span class="progress-label">${label}</span>
+      <div class="progress-track">
+        <div class="progress-fill ${progressClass(pct)}" style="width:${pct}%"></div>
+      </div>
+      <span class="progress-num">${done}/${total}</span>
+    </div>`;
+}
+
+// ============================================================
+// RENDER: detail panel
+// ============================================================
+function showDetail(m) {
+  const existing = document.querySelector('.detail-overlay');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'detail-overlay';
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+  const userAssignments = ASSIGNMENTS.filter(a => a.name === m.name).reverse();
+
+  overlay.innerHTML = `
+    <div class="detail-panel" style="position:relative;">
+      <button class="close-btn" onclick="this.closest('.detail-overlay').remove()">✕</button>
+      <h2>${m.name} <span style="font-size:13px;color:var(--muted);font-weight:400;">· ${m.isLeader ? '组长' : '组员'}</span></h2>
+      <p class="detail-meta">${m.region} · ${m.referee}</p>
+      <div class="detail-stats">
+        <div class="detail-stat"><div class="ds-num">${m.awareness}/${m.awarenessTotal}</div><div class="ds-label">每日觉察</div></div>
+        <div class="detail-stat"><div class="ds-num">${m.homework}/${m.homeworkTotal}</div><div class="ds-label">本周作业</div></div>
+        <div class="detail-stat"><div class="ds-num">${m.practice}/${m.practiceTotal}</div><div class="ds-label">每日践行</div></div>
+        <div class="detail-stat"><div class="ds-num">${m.attendance}/${m.shouldAttend}</div><div class="ds-label">上课出勤</div></div>
+      </div>
+      <div class="detail-assignments">
+        <h3>📝 作业记录（${userAssignments.length}条）</h3>
+        ${userAssignments.length === 0 ? '<p style="color:var(--muted);font-size:13px;">暂无提交记录</p>' :
+          userAssignments.map(a => `
+            <div class="assignment-item">
+              <div class="ai-date">${a.hwDate} · ${a.note}</div>
+              <div class="ai-content">${a.content}</div>
+              ${a.feedback ? `<div class="ai-feedback">💡 ${a.feedback}</div>` : ''}
+            </div>
+          `).join('')
+        }
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+// ============================================================
+// RENDER: attendance table
+// ============================================================
+function renderAttendance() {
+  const names = MEMBERS.map(m => m.name);
+  const headRow = '<tr><th>周次</th><th>日期</th>' + names.map(n => `<th>${n}</th>`).join('') + '</tr>';
+  const bodyRows = ATTENDANCE.map(r => {
+    const cells = names.map(n => {
+      const v = r[n] || '';
+      const cls = v === '✓' ? 'at-yes' : v === '✗' ? 'at-no' : 'at-empty';
+      return `<td class="${cls}">${v || '-'}</td>`;
+    }).join('');
+    return `<tr><td>${r.week}</td><td class="col-date">${r.date}</td>${cells}</tr>`;
+  }).join('');
+  document.getElementById('attTable').innerHTML = headRow + bodyRows;
+}
+
+// ============================================================
+// FILTERS & SEARCH
+// ============================================================
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderMembers();
+  });
+});
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  searchQuery = e.target.value.trim();
+  renderMembers();
+});
+
+// ============================================================
+// INIT
+// ============================================================
+renderMembers();
+renderAttendance();
+</script>
+</body>
+</html>
