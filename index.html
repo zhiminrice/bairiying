@@ -1437,7 +1437,7 @@ const GROUPS = {
   '4组': { leader:'毛梓晰', members:['毛梓晰','王鹏圣','庞晓冰','吴文迪','黄杰梅','周青艳','卢有珍','李季连'] },
   '5组': { leader:'蔡学敏', members:['蔡学敏','谭丽韵','谭碧怡','蔡泽丽','黄海啦','余妙平','梁沛琪','冼兆明','李瑞娜'] },
   '6组': { leader:'霍立韵', members:['霍立韵','郑丹妮','麦瑞开','黄惠筠','宁小漫','刘水燕','谭燕英','吴玉华','张静雯'] },
-  '7组': { leader:'蔡小红', members:['蔡小红','雷艳明','谢敏航','沈杨群','肖桂梅','邓琳','龙振荣','陈巧莲','吕培芝','戴金梅'] }
+  '7组': { leader:'蔡小红', members:['蔡小红','雷艳明','谢敏航','沈杨群','肖桂梅','邓琳','龙振荣','陈巧莲','吕培芝'] }
 };
 
 // ====== LOCAL STORAGE KEY ======
@@ -1877,7 +1877,7 @@ function buildCard(m) {
   let h='<div class="member-card '+getBorderClass(m)+'" onclick="showDetail(\''+m.name.replace(/'/g,"\\'")+'\')">';
   h+='<div class="card-header"><div class="card-name">'+m.name+(m.is_leader?' <span class="card-badge badge-leader">组长</span>':'')+'</div>';
   h+='<span class="card-badge '+getBadgeClass(m)+'">'+wstatus+'</span></div>';
-  h+='<div class="card-meta"><span>'+genderIcon+' '+(m.gender==='男'?'男':'女')+'</span><span>&#128205; '+m.region+'</span><span>&#128100; '+m.referee+'</span><span style="color:#b0a99f;font-size:10px">'+m.newcomer+'</span></div>';
+  h+='<div class="card-meta"><span style="font-weight:600;color:var(--accent)">'+m.group+'</span><span>'+genderIcon+' '+(m.gender==='男'?'男':'女')+'</span><span>&#128205; '+m.region+'</span><span>&#128100; '+m.referee+'</span><span style="color:#b0a99f;font-size:10px">'+m.newcomer+'</span></div>';
   if (ws.showAwareness) h+=buildProgressRow('每日觉察',ws.awareness,ws.awarenessMax);
   h+=buildProgressRow('本周作业',ws.hwCount||0,(ws.hwCount||ws.homeworkMax));
   h+=buildProgressRow('每日践行',ws.prCount||0,(ws.prCount||ws.practiceMax));
