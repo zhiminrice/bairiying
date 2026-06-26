@@ -342,13 +342,14 @@ body::before {
 }
 .assignment-item { position: relative; }
 .assignment-item .delete-btn {
-  position: absolute; top: 10px; right: 12px;
-  width: 28px; height: 28px; border-radius: 50%;
+  position: absolute; top: 8px; right: 10px;
+  height: 24px; border-radius: 12px; padding: 0 10px;
   border: 1px solid transparent; background: transparent;
-  color: var(--muted); font-size: 16px; cursor: pointer;
+  color: var(--muted); font-size: 11px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: all 0.2s; opacity: 0; line-height: 1;
-  font-family: inherit;
+  font-family: inherit; gap: 2px; font-weight: 600;
+  white-space: nowrap;
 }
 .assignment-item:hover .delete-btn { opacity: 0.6; }
 .assignment-item .delete-btn:hover {
@@ -530,11 +531,14 @@ textarea {
   overflow: hidden;
 }
 .submitted-item .si-delete {
-  position: absolute; top: 4px; right: 4px;
-  width: 20px; height: 20px; border-radius: 50%; border: none;
-  background: transparent; cursor: pointer; font-size: 12px;
-  color: var(--muted); display: flex; align-items: center; justify-content: center;
+  position: absolute; top: 6px; right: 8px;
+  height: 24px; border-radius: 12px; border: 1px solid var(--danger);
+  background: var(--danger-bg); cursor: pointer; font-size: 11px;
+  color: var(--danger); display: flex; align-items: center; justify-content: center;
+  padding: 0 10px; gap: 3px; font-weight: 600;
+  white-space: nowrap;
 }
+.submitted-item .si-delete:hover { background: var(--danger); color: #fff; }
 .pill-bar {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
@@ -1423,7 +1427,7 @@ const BITABLE_DATA = {
 
 
 
-const ATTENDANCE_ALL = [{"week":1,"weekLabel":"第1周","date":"05/25（周一）","刘瑛茹":1,"张冬梅":0,"喻荔":1,"陈伟玲":0,"黄语柔":1,"刘艳红":0,"林小媚":1,"吴瑞乾":1,"赵华海":1,"杨艳辉":1,"张惠金":1,"黄爱优":1,"周劭峥":1,"刘彩丽":1,"李瑞颜":0,"杨敏":1,"周文源":1,"钟智敏":1,"尤夏靖":0,"王碧娟":1,"黄学隆":1,"郑诗韵":1,"郑柳":1,"莫燕青":1,"刘师":1,"王璐璐":1,"毛梓晰":1,"王鹏圣":1,"庞晓冰":1,"吴文迪":1,"黄杰梅":1,"周青艳":1,"卢有珍":1,"李季连":1,"蔡学敏":1,"谭丽韵":1,"谭碧怡":0,"蔡泽丽":0,"黄海啦":1,"余妙平":0,"梁沛琪":0,"冼兆明":1,"李瑞娜":1,"霍立韵":1,"郑丹妮":1,"麦瑞开":1,"黄惠筠":1,"宁小漫":1,"刘水燕":1,"谭燕英":1,"吴玉华":1,"张静雯":1,"蔡小红":1,"雷艳明":1,"谢敏航":1,"沈杨群":0,"肖桂梅":0,"邓琳":0,"龙振荣":0,"陈巧莲":0,"吕培芝":1,"戴金梅":0},{"week":2,"weekLabel":"第2周","date":"06/03（周二）","刘瑛茹":1,"张冬梅":0,"喻荔":1,"陈伟玲":0,"黄语柔":1,"刘艳红":1,"林小媚":0,"吴瑞乾":1,"赵华海":1,"杨艳辉":1,"张惠金":1,"黄爱优":1,"周劭峥":1,"刘彩丽":1,"李瑞颜":0,"杨敏":1,"周文源":1,"钟智敏":1,"尤夏靖":0,"王碧娟":0,"黄学隆":1,"郑诗韵":0,"郑柳":1,"莫燕青":1,"刘师":1,"王璐璐":1,"毛梓晰":0,"王鹏圣":0,"庞晓冰":1,"吴文迪":1,"黄杰梅":0,"周青艳":0,"卢有珍":1,"李季连":0,"蔡学敏":1,"谭丽韵":1,"谭碧怡":0,"蔡泽丽":0,"黄海啦":1,"余妙平":0,"梁沛琪":1,"冼兆明":0,"李瑞娜":0,"霍立韵":1,"郑丹妮":1,"麦瑞开":0,"黄惠筠":1,"宁小漫":0,"刘水燕":1,"谭燕英":1,"吴玉华":1,"张静雯":1,"蔡小红":1,"雷艳明":1,"谢敏航":1,"沈杨群":0,"肖桂梅":0,"邓琳":0,"龙振荣":0,"陈巧莲":0,"吕培芝":1,"戴金梅":0},{"week":3,"weekLabel":"第3周","date":"06/09（周二）","刘瑛茹":1,"张冬梅":0,"喻荔":0,"陈伟玲":0,"黄语柔":1,"刘艳红":1,"林小媚":0,"吴瑞乾":1,"赵华海":1,"杨艳辉":1,"张惠金":1,"黄爱优":1,"周劭峥":1,"刘彩丽":1,"李瑞颜":1,"杨敏":1,"周文源":1,"钟智敏":1,"尤夏靖":1,"王碧娟":0,"黄学隆":1,"郑诗韵":1,"郑柳":1,"莫燕青":0,"刘师":1,"王璐璐":1,"毛梓晰":0,"王鹏圣":1,"庞晓冰":1,"吴文迪":1,"黄杰梅":0,"周青艳":0,"卢有珍":1,"李季连":0,"蔡学敏":1,"谭丽韵":1,"谭碧怡":0,"蔡泽丽":0,"黄海啦":1,"余妙平":0,"梁沛琪":0,"冼兆明":1,"李瑞娜":1,"霍立韵":1,"郑丹妮":1,"麦瑞开":0,"黄惠筠":1,"宁小漫":1,"刘水燕":0,"谭燕英":1,"吴玉华":1,"张静雯":1,"蔡小红":0,"雷艳明":1,"谢敏航":1,"沈杨群":0,"肖桂梅":0,"邓琳":0,"龙振荣":0,"陈巧莲":0,"吕培芝":1,"戴金梅":0},{"week":4,"weekLabel":"第4周","date":"06/17（周三）","刘瑛茹":1,"张冬梅":0,"喻荔":0,"陈伟玲":0,"黄语柔":0,"刘艳红":0,"林小媚":0,"吴瑞乾":1,"赵华海":0,"杨艳辉":1,"张惠金":1,"黄爱优":1,"周劭峥":1,"刘彩丽":1,"李瑞颜":1,"杨敏":1,"周文源":1,"钟智敏":1,"尤夏靖":1,"王碧娟":1,"黄学隆":1,"郑诗韵":0,"郑柳":1,"莫燕青":0,"刘师":1,"王璐璐":1,"毛梓晰":0,"王鹏圣":0,"庞晓冰":1,"吴文迪":1,"黄杰梅":0,"周青艳":0,"卢有珍":1,"李季连":1,"蔡学敏":1,"谭丽韵":1,"谭碧怡":0,"蔡泽丽":1,"黄海啦":1,"余妙平":0,"梁沛琪":0,"冼兆明":0,"李瑞娜":0,"霍立韵":0,"郑丹妮":1,"麦瑞开":0,"黄惠筠":1,"宁小漫":0,"刘水燕":0,"谭燕英":1,"吴玉华":1,"张静雯":1,"蔡小红":1,"雷艳明":1,"谢敏航":0,"沈杨群":0,"肖桂梅":0,"邓琳":0,"龙振荣":0,"陈巧莲":0,"吕培芝":1,"戴金梅":0},{"week":5,"weekLabel":"第5周","date":"06/22（周日）","刘瑛茹":1,"张冬梅":0,"喻荔":1,"陈伟玲":0,"黄语柔":1,"刘艳红":1,"林小媚":1,"吴瑞乾":1,"赵华海":0,"杨艳辉":1,"张惠金":1,"黄爱优":1,"周劭峥":1,"刘彩丽":1,"李瑞颜":1,"杨敏":1,"周文源":1,"钟智敏":1,"尤夏靖":1,"王碧娟":1,"黄学隆":1,"郑诗韵":1,"郑柳":1,"莫燕青":1,"刘师":1,"王璐璐":1,"毛梓晰":0,"王鹏圣":0,"庞晓冰":0,"吴文迪":1,"黄杰梅":0,"周青艳":0,"卢有珍":1,"李季连":0,"蔡学敏":1,"谭丽韵":1,"谭碧怡":0,"蔡泽丽":0,"黄海啦":1,"余妙平":0,"梁沛琪":0,"冼兆明":0,"李瑞娜":0,"霍立韵":1,"郑丹妮":1,"麦瑞开":0,"黄惠筠":1,"宁小漫":1,"刘水燕":0,"谭燕英":0,"吴玉华":0,"张静雯":1,"蔡小红":1,"雷艳明":0,"谢敏航":0,"沈杨群":0,"肖桂梅":0,"邓琳":0,"龙振荣":1,"陈巧莲":0,"吕培芝":1,"戴金梅":0}];
+const ATTENDANCE_ALL = [{"week": 1, "weekLabel": "第1周", "date": "05/25（周一）", "刘瑛茹": 1, "张冬梅": 0, "喻荔": 1, "陈伟玲": 0, "黄语柔": 1, "刘艳红": 0, "林小媚": 1, "吴瑞乾": 1, "赵华海": 1, "杨艳辉": 1, "张惠金": 1, "黄爱优": 1, "周劭峥": 1, "刘彩丽": 1, "李瑞颜": 0, "杨敏": 1, "周文源": 1, "钟智敏": 1, "尤夏靖": 0, "王碧娟": 1, "黄学隆": 1, "郑诗韵": 1, "郑柳": 1, "莫燕青": 1, "刘师": 1, "王璐璐": 1, "毛梓晰": 1, "王鹏圣": 1, "庞晓冰": 1, "吴文迪": 1, "黄杰梅": 1, "周青艳": 1, "卢有珍": 1, "李季连": 1, "蔡学敏": 1, "谭丽韵": 1, "谭碧怡": 0, "蔡泽丽": 0, "黄海啦": 1, "余妙平": 0, "梁沛琪": 0, "冼兆明": 1, "李瑞娜": 1, "霍立韵": 1, "郑丹妮": 1, "麦瑞开": 1, "黄惠筠": 1, "宁小漫": 1, "刘水燕": 1, "谭燕英": 1, "吴玉华": 1, "张静雯": 1, "蔡小红": 1, "雷艳明": 1, "谢敏航": 1, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 1, "戴金梅": 0}, {"week": 2, "weekLabel": "第2周", "date": "06/03（周二）", "刘瑛茹": 1, "张冬梅": 0, "喻荔": 1, "陈伟玲": 0, "黄语柔": 1, "刘艳红": 1, "林小媚": 0, "吴瑞乾": 1, "赵华海": 1, "杨艳辉": 1, "张惠金": 1, "黄爱优": 1, "周劭峥": 1, "刘彩丽": 1, "李瑞颜": 0, "杨敏": 1, "周文源": 1, "钟智敏": 1, "尤夏靖": 0, "王碧娟": 0, "黄学隆": 1, "郑诗韵": 0, "郑柳": 1, "莫燕青": 1, "刘师": 1, "王璐璐": 1, "毛梓晰": 0, "王鹏圣": 0, "庞晓冰": 1, "吴文迪": 1, "黄杰梅": 0, "周青艳": 0, "卢有珍": 1, "李季连": 0, "蔡学敏": 1, "谭丽韵": 1, "谭碧怡": 0, "蔡泽丽": 0, "黄海啦": 1, "余妙平": 0, "梁沛琪": 1, "冼兆明": 0, "李瑞娜": 0, "霍立韵": 1, "郑丹妮": 1, "麦瑞开": 0, "黄惠筠": 1, "宁小漫": 0, "刘水燕": 1, "谭燕英": 1, "吴玉华": 1, "张静雯": 1, "蔡小红": 1, "雷艳明": 1, "谢敏航": 1, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 1, "戴金梅": 0}, {"week": 3, "weekLabel": "第3周", "date": "06/09（周二）", "刘瑛茹": 1, "张冬梅": 0, "喻荔": 0, "陈伟玲": 0, "黄语柔": 1, "刘艳红": 1, "林小媚": 0, "吴瑞乾": 1, "赵华海": 1, "杨艳辉": 1, "张惠金": 1, "黄爱优": 1, "周劭峥": 1, "刘彩丽": 1, "李瑞颜": 1, "杨敏": 1, "周文源": 1, "钟智敏": 1, "尤夏靖": 1, "王碧娟": 0, "黄学隆": 1, "郑诗韵": 1, "郑柳": 1, "莫燕青": 0, "刘师": 1, "王璐璐": 1, "毛梓晰": 0, "王鹏圣": 1, "庞晓冰": 1, "吴文迪": 1, "黄杰梅": 0, "周青艳": 0, "卢有珍": 1, "李季连": 0, "蔡学敏": 1, "谭丽韵": 1, "谭碧怡": 0, "蔡泽丽": 0, "黄海啦": 1, "余妙平": 0, "梁沛琪": 0, "冼兆明": 1, "李瑞娜": 1, "霍立韵": 1, "郑丹妮": 1, "麦瑞开": 0, "黄惠筠": 1, "宁小漫": 1, "刘水燕": 0, "谭燕英": 1, "吴玉华": 1, "张静雯": 1, "蔡小红": 0, "雷艳明": 1, "谢敏航": 1, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 1, "戴金梅": 0}, {"week": 4, "weekLabel": "第4周", "date": "06/17（周三）", "刘瑛茹": 1, "张冬梅": 0, "喻荔": 0, "陈伟玲": 0, "黄语柔": 0, "刘艳红": 0, "林小媚": 0, "吴瑞乾": 1, "赵华海": 0, "杨艳辉": 1, "张惠金": 1, "黄爱优": 1, "周劭峥": 1, "刘彩丽": 1, "李瑞颜": 1, "杨敏": 1, "周文源": 1, "钟智敏": 1, "尤夏靖": 1, "王碧娟": 1, "黄学隆": 1, "郑诗韵": 0, "郑柳": 1, "莫燕青": 0, "刘师": 1, "王璐璐": 1, "毛梓晰": 0, "王鹏圣": 0, "庞晓冰": 1, "吴文迪": 1, "黄杰梅": 0, "周青艳": 0, "卢有珍": 1, "李季连": 1, "蔡学敏": 1, "谭丽韵": 1, "谭碧怡": 0, "蔡泽丽": 1, "黄海啦": 1, "余妙平": 0, "梁沛琪": 0, "冼兆明": 0, "李瑞娜": 0, "霍立韵": 0, "郑丹妮": 1, "麦瑞开": 0, "黄惠筠": 1, "宁小漫": 0, "刘水燕": 0, "谭燕英": 1, "吴玉华": 1, "张静雯": 1, "蔡小红": 1, "雷艳明": 1, "谢敏航": 0, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 1, "戴金梅": 0}, {"week": 5, "weekLabel": "第5周", "date": "06/22（周日）", "刘瑛茹": 0, "张冬梅": 0, "喻荔": 0, "陈伟玲": 0, "黄语柔": 0, "刘艳红": 0, "林小媚": 0, "吴瑞乾": 0, "赵华海": 0, "杨艳辉": 0, "张惠金": 0, "黄爱优": 0, "周劭峥": 0, "刘彩丽": 0, "李瑞颜": 0, "杨敏": 0, "周文源": 0, "钟智敏": 0, "尤夏靖": 0, "王碧娟": 0, "黄学隆": 0, "郑诗韵": 0, "郑柳": 0, "莫燕青": 0, "刘师": 0, "王璐璐": 0, "毛梓晰": 0, "王鹏圣": 0, "庞晓冰": 0, "吴文迪": 0, "黄杰梅": 0, "周青艳": 0, "卢有珍": 0, "李季连": 0, "蔡学敏": 0, "谭丽韵": 0, "谭碧怡": 0, "蔡泽丽": 0, "黄海啦": 0, "余妙平": 0, "梁沛琪": 0, "冼兆明": 0, "李瑞娜": 0, "霍立韵": 0, "郑丹妮": 0, "麦瑞开": 0, "黄惠筠": 0, "宁小漫": 0, "刘水燕": 0, "谭燕英": 0, "吴玉华": 0, "张静雯": 0, "蔡小红": 0, "雷艳明": 0, "谢敏航": 0, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 0, "戴金梅": 0}];
 
 
 const LEADERS = {'1组':'刘瑛茹','2组':'杨艳辉','3组':'钟智敏','4组':'毛梓晰','5组':'蔡学敏','6组':'霍立韵','7组':'蔡小红'};
@@ -1630,7 +1634,7 @@ function renderSubmitted() {
     const weekLabel = {1:'📌 第1周',2:'🌟 第2周',3:'🔥 第3周'}[s.week] || '第' + s.week + '周';
     const typeColor = { '作业':'var(--success)', '践行':'var(--accent)', '分享':'var(--gold)', '觉察':'var(--muted)' }[s.type] || 'var(--success)';
     const typeBg = { '作业':'var(--success-bg)', '践行':'var(--accent-light)', '分享':'var(--gold-light)', '觉察':'#f0ede8' }[s.type] || 'var(--success-bg)';
-    return '<div class="submitted-item"><button class="si-delete" onclick="deleteEntry('+s.id+')">✕</button><div class="si-header"><span class="si-name">'+s.name+' <span style="font-size:11px;color:var(--muted);font-weight:400">'+s.group+' · '+s.time+'</span></span><div class="si-tags"><span class="si-tag" style="background:var(--accent-light);color:var(--accent)">'+weekLabel+'</span><span class="si-tag" style="background:'+typeBg+';color:'+typeColor+'">'+s.type+'</span></div></div><div class="si-preview">'+s.content+'</div></div>';
+    return '<div class="submitted-item"><button class="si-delete" onclick="deleteEntry('+s.id+')">✕ 删除</button><div class="si-header"><span class="si-name">'+s.name+' <span style="font-size:11px;color:var(--muted);font-weight:400">'+s.group+' · '+s.time+'</span></span><div class="si-tags"><span class="si-tag" style="background:var(--accent-light);color:var(--accent)">'+weekLabel+'</span><span class="si-tag" style="background:'+typeBg+';color:'+typeColor+'">'+s.type+'</span></div></div><div class="si-preview">'+s.content+'</div></div>';
   }).join('');
 }
 
@@ -1877,7 +1881,7 @@ function buildCard(m) {
   let h='<div class="member-card '+getBorderClass(m)+'" onclick="showDetail(\''+m.name.replace(/'/g,"\\'")+'\')">';
   h+='<div class="card-header"><div class="card-name">'+m.name+(m.is_leader?' <span class="card-badge badge-leader">组长</span>':'')+'</div>';
   h+='<span class="card-badge '+getBadgeClass(m)+'">'+wstatus+'</span></div>';
-  h+='<div class="card-meta"><span>'+genderIcon+' '+(m.gender==='男'?'男':'女')+'</span><span>&#128205; '+m.region+'</span><span>&#128100; '+m.referee+'</span><span style="color:#b0a99f;font-size:10px">'+m.newcomer+'</span></div>';
+  h+='<div class="card-meta"><span style="font-weight:600;color:var(--accent)">'+m.group+'</span><span>'+genderIcon+' '+(m.gender==='男'?'男':'女')+'</span><span>&#128205; '+m.region+'</span><span>&#128100; '+m.referee+'</span><span style="color:#b0a99f;font-size:10px">'+m.newcomer+'</span></div>';
   if (ws.showAwareness) h+=buildProgressRow('每日觉察',ws.awareness,ws.awarenessMax);
   h+=buildProgressRow('本周作业',ws.hwCount||0,(ws.hwCount||ws.homeworkMax));
   h+=buildProgressRow('每日践行',ws.prCount||0,(ws.prCount||ws.practiceMax));
@@ -1992,7 +1996,7 @@ function buildAssignmentItemRelay(label, obj, week, typeCN) {
   if(!obj || !obj.content) return '';
   var recordId = obj._record_id || '';
   var delBtn = recordId
-    ? '<button class="delete-btn relay-del" onclick="event.stopPropagation();deleteRelayRecord(\''+recordId+'\',\''+escapeHtml(obj.name)+'\','+week+',\''+typeCN+'\')" title="从飞书表格删除">✕</button>'
+    ? '<button class="delete-btn relay-del" onclick="event.stopPropagation();deleteRelayRecord(\''+recordId+'\',\''+escapeHtml(obj.name)+'\','+week+',\''+typeCN+'\')" title="从飞书表格删除">✕ 删除</button>'
     : '';
   return '<div class="assignment-item relay-item"><div class="ai-label">'+label+' <span class="badge-local" style="background:var(--accent-light);color:var(--accent)">云</span></div><div class="ai-content">'+escapeHtml(obj.content)+'</div>'+delBtn+'</div>';
 }
