@@ -995,16 +995,6 @@ textarea {
     <input type="hidden" id="exportGroup" value="all">
   </div>
 
-  <div class="form-group">
-    <label class="form-label">导出范围</label>
-    <div class="chip-group" id="exportTimeRangeChips">
-      <button class="chip selected" data-etimerange="all">📋 全部记录</button>
-      <button class="chip" data-etimerange="new">🆕 仅新增（未导出过）</button>
-    </div>
-    <input type="hidden" id="exportTimeRangeVal" value="all">
-    <div id="exportTimeHint" style="font-size:11px;color:var(--muted);margin-top:6px;"></div>
-  </div>
-
   <div class="btn-row">
     <button class="btn btn-primary" onclick="doExport()">📥 导出 CSV</button>
     <button class="btn btn-secondary" onclick="copyExport()">📋 复制文本</button>
@@ -1742,12 +1732,7 @@ function getLocalSubmissionsMap() {
       var norm = function(s) { return (s||'').replace(/<br\s*\/?>/gi,'\n').replace(/\s+/g,' ').trim(); };
       items.forEach(function(item) {
         var cmp = norm(item.content);
-        // "Upgrade" existing entries with relay _record_id (critical for export dedup)
-        var existing = map[key].find(function(s) { return norm(s.content) === cmp; });
-        if (existing) {
-          if (item._record_id && !existing._record_id) existing._record_id = item._record_id;
-          if (item.source && !existing.source) existing.source = item.source;
-        } else {
+        if (!map[key].some(function(s) { return norm(s.content) === cmp; })) {
           map[key].push(item);
         }
       });
@@ -2154,35 +2139,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 init();
 // ====== EXPORT LOGIC ======
-let _exportWeek = 'all', _exportType = 'all', _exportGroup = 'all', _exportTimeRange = 'all';
-
-// --- record_id-based dedup for "export new only" ---
-const EXPORTED_RIDS_KEY = 'bairiying_exported_rids';
-function getExportedRids() {
-  try { return JSON.parse(localStorage.getItem(EXPORTED_RIDS_KEY) || '[]'); }
-  catch(e) { return []; }
-}
-function getExportedRidsSet() { return new Set(getExportedRids()); }
-function addExportedRids(newRids) {
-  var set = getExportedRidsSet();
-  newRids.forEach(function(id) { if (id) set.add(id); });
-  try { localStorage.setItem(EXPORTED_RIDS_KEY, JSON.stringify(Array.from(set))); } catch(e) {}
-}
-function resetExportedRids() {
-  try { localStorage.removeItem(EXPORTED_RIDS_KEY); } catch(e) {}
-}
-function updateExportTimeHint() {
-  var el = document.getElementById('exportTimeHint');
-  if (!el) return;
-  if (_exportTimeRange === 'new') {
-    var exported = getExportedRids();
-    el.innerHTML = '📌 已标记 ' + exported.length + ' 条已导出记录，本次仅导出新增部分'
-      + ' &nbsp;<a href="javascript:void(0)" onclick="resetExportedRids();updateExportTimeHint();updateExportPreview();" style="color:var(--accent);font-size:11px;">重置记录</a>';
-  } else {
-    var exported = getExportedRids();
-    el.innerHTML = exported.length > 0 ? '💡 已标记 ' + exported.length + ' 条已导出（切换到「仅新增」可只导新数据）' : '';
-  }
-}
+let _exportWeek = 'all', _exportType = 'all', _exportGroup = 'all';
 
 function bindExportChips() {
   var ew = document.getElementById('exportWeeks');
@@ -2221,20 +2178,6 @@ function bindExportChips() {
       updateExportPreview();
     });
   }
-  var etr = document.getElementById('exportTimeRangeChips');
-  if (!etr._bound) { etr._bound = true;
-    etr.addEventListener('click', function(e) {
-      var chip = e.target.closest('[data-etimerange]');
-      if (!chip) return;
-      etr.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('selected'); });
-      chip.classList.add('selected');
-      _exportTimeRange = chip.dataset.etimerange;
-      document.getElementById('exportTimeRangeVal').value = _exportTimeRange;
-      updateExportTimeHint();
-      updateExportPreview();
-    });
-  }
-  updateExportTimeHint();
   updateExportPreview();
 }
 
@@ -2242,7 +2185,6 @@ function getExportData() {
   var results = [];
   var localMap = getLocalMap();
   var names = []; DATA.forEach(function(m) { if (names.indexOf(m.name) < 0) names.push(m.name); });
-  var exportedSet = _exportTimeRange === 'new' ? getExportedRidsSet() : null;
 
   names.forEach(function(name) {
     var m = DATA.find(function(d) { return d.name === name; });
@@ -2261,22 +2203,14 @@ function getExportData() {
       for (var t in types) {
         if (_exportType !== 'all' && t !== _exportType) continue;
         var _seenExport = {};
-        // Only include embedded DATA in "all" mode (legacy static data, no record_id)
-        if (_exportTimeRange !== 'new') {
-          types[t].forEach(function(c) {
-            results.push({ name: name, group: m.group, week: w, type: t, content: c, source: 'embedded' });
-            _seenExport[_en(c)] = true;
-          });
-        }
+        types[t].forEach(function(c) {
+          results.push({ name: name, group: m.group, week: w, type: t, content: c, source: 'embedded' });
+          _seenExport[_en(c)] = true;
+        });
         localTypes[t].forEach(function(s) {
-          if (_seenExport[_en(s.content)]) return;
-          // In "new" mode: only include records with _record_id that haven't been exported yet
-          if (_exportTimeRange === 'new') {
-            var rid = s._record_id;
-            if (!rid) return;               // skip legacy records without record_id
-            if (exportedSet.has(rid)) return; // skip already-exported
+          if (!_seenExport[_en(s.content)]) {
+            results.push({ name: name, group: m.group, week: w, type: t, content: s.content, source: 'local' });
           }
-          results.push({ name: name, group: m.group, week: w, type: t, content: s.content, source: s.source || 'local', _record_id: s._record_id || '' });
         });
       }
     }
@@ -2288,24 +2222,12 @@ function updateExportPreview() {
   var data = getExportData();
   var el = document.getElementById('exportPreview');
   if (!el) return;
-  if (_exportTimeRange === 'new') {
-    el.innerHTML = '<span style="font-size:12px;color:var(--muted)">🆕 本次将导出 <strong style="color:var(--accent)">' + data.length + '</strong> 条新记录</span>';
-  } else {
-    el.innerHTML = '<span style="font-size:12px;color:var(--muted)">📊 共 <strong style="color:var(--accent)">' + data.length + '</strong> 条记录匹配当前筛选</span>';
-  }
-}
-
-function _recordExportedRids(data) {
-  var rids = data.filter(function(d) { return d._record_id; }).map(function(d) { return d._record_id; });
-  if (rids.length > 0) addExportedRids(rids);
+  el.innerHTML = '<span style="font-size:12px;color:var(--muted)">📊 共 <strong style="color:var(--accent)">' + data.length + '</strong> 条记录匹配当前筛选</span>';
 }
 
 function doExport() {
   var data = getExportData();
   if (data.length === 0) { toast('没有匹配的数据'); return; }
-
-  // Mark exported record_ids (for "new only" dedup)
-  _recordExportedRids(data);
 
   // Build CSV with BOM for Excel compatibility
   var BOM = '\uFEFF';
@@ -2327,16 +2249,11 @@ function doExport() {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
   toast('已导出 ' + data.length + ' 条记录');
-  updateExportTimeHint();
-  updateExportPreview();
 }
 
 function copyExport() {
   var data = getExportData();
   if (data.length === 0) { toast('没有匹配的数据'); return; }
-
-  // Mark exported record_ids (for "new only" dedup)
-  _recordExportedRids(data);
 
   var text = data.map(function(d) {
     return '【' + d.name + ' · ' + d.group + ' · 第' + d.week + '周 · ' + d.type + '】\n' + d.content;
@@ -2344,8 +2261,6 @@ function copyExport() {
 
   navigator.clipboard.writeText(text).then(function() {
     toast('已复制 ' + data.length + ' 条记录到剪贴板');
-    updateExportTimeHint();
-    updateExportPreview();
   }).catch(function() {
     // Fallback for older browsers
     var ta = document.createElement('textarea');
@@ -2356,8 +2271,6 @@ function copyExport() {
     document.execCommand('copy');
     document.body.removeChild(ta);
     toast('已复制 ' + data.length + ' 条记录到剪贴板');
-    updateExportTimeHint();
-    updateExportPreview();
   });
 }
 
