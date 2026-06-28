@@ -1430,15 +1430,26 @@ const LEADERS = {'1组':'刘瑛茹','2组':'杨艳辉','3组':'钟智敏','4组'
 const TOTALS = { awareness: 4, homework: 3, practice: 3 };
 
 // ====== GROUPS (from homework_submit.html) ======
-const GROUPS = {
-  '1组': { leader:'刘瑛茹', members:['刘瑛茹','张冬梅','喻荔','陈伟玲','黄语柔','刘艳红','林小媚','吴瑞乾','赵华海'] },
-  '2组': { leader:'杨艳辉', members:['杨艳辉','张惠金','黄爱优','周劭峥','刘彩丽','李瑞颜','杨敏','周文源'] },
-  '3组': { leader:'钟智敏', members:['钟智敏','尤夏靖','王碧娟','黄学隆','郑诗韵','郑柳','莫燕青','刘师','王璐璐'] },
-  '4组': { leader:'毛梓晰', members:['毛梓晰','王鹏圣','庞晓冰','吴文迪','黄杰梅','周青艳','卢有珍','李季连'] },
-  '5组': { leader:'蔡学敏', members:['蔡学敏','谭丽韵','谭碧怡','蔡泽丽','黄海啦','余妙平','梁沛琪','冼兆明','李瑞娜'] },
-  '6组': { leader:'霍立韵', members:['霍立韵','郑丹妮','麦瑞开','黄惠筠','宁小漫','刘水燕','谭燕英','吴玉华','张静雯'] },
-  '7组': { leader:'蔡小红', members:['蔡小红','雷艳明','谢敏航','沈杨群','肖桂梅','邓琳','龙振荣','陈巧莲','吕培芝'] }
-};
+// ====== GROUPS DATA ======
+// Loaded from groups.json at startup, with localStorage fallback.
+// groups.json is a SEPARATE file so adding/removing members never gets overwritten by code changes.
+let GROUPS = {};
+const GROUPS_CACHE_KEY = 'bairiying_groups_cache';
+function loadGroups() {
+  return fetch('groups.json')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      GROUPS = data;
+      try { localStorage.setItem(GROUPS_CACHE_KEY, JSON.stringify(data)); } catch(e) {}
+      console.log('[Groups] Loaded from groups.json: ' + Object.keys(data).length + ' groups');
+    })
+    .catch(function() {
+      try {
+        var cached = localStorage.getItem(GROUPS_CACHE_KEY);
+        if (cached) { GROUPS = JSON.parse(cached); console.log('[Groups] Loaded from cache'); }
+      } catch(e) {}
+    });
+}
 
 // ====== LOCAL STORAGE KEY ======
 const STORAGE_KEY = 'submittedLocal';
@@ -1788,7 +1799,7 @@ function resetLocalMap() { _localMap = null; }
 
 let activeGroup = 'all', activeFilter = 'all', searchQuery = '', activeWeek = 'all';
 
-function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();}); bindEvents(); setTimeout(renderAttendanceTable, 100); }
+function init() { loadGroups().then(function(){loadAttendanceData();}).then(function(){renderGroupTabs();fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();});renderAttendanceTable();}).catch(function(){renderGroupTabs();}); bindEvents(); }
 
 function renderGroupTabs() {
   const c = document.getElementById('groupTabs');
