@@ -1799,7 +1799,7 @@ function resetLocalMap() { _localMap = null; }
 
 let activeGroup = 'all', activeFilter = 'all', searchQuery = '', activeWeek = 'all';
 
-function init() { loadGroups().then(function(){loadAttendanceData();}).then(function(){renderGroupTabs();fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();});renderAttendanceTable();}).catch(function(){renderGroupTabs();}); bindEvents(); }
+function init() { loadGroups().then(function(){ return loadAttendanceData(); }).then(function(){ renderGroupTabs(); fetchRelaySubmissions().then(function(){ resetLocalMap(); applyFilters(); }); renderAttendanceTable(); }).catch(function(){ renderGroupTabs(); renderAttendanceTable(); }); bindEvents(); }
 
 function renderGroupTabs() {
   const c = document.getElementById('groupTabs');
