@@ -799,7 +799,7 @@ textarea {
     <button class="week-tab" data-week="3">🔥 第3周<span class="wbadge">6/9</span></button>
     <button class="week-tab" data-week="4">第4周<span class="wbadge">6/17</span></button>
     <button class="week-tab" data-week="5">第5周<span class="wbadge">6/22</span></button>
-    <button class="week-tab" data-week="6">第6周<span class="wbadge">6/29</span></button>
+    <button class="week-tab" data-week="6">第6周<span class="wbadge">TBD</span></button>
     <button class="week-tab" data-week="7">第7周<span class="wbadge">TBD</span></button>
     <button class="week-tab" data-week="8">第8周<span class="wbadge">TBD</span></button>
     <button class="week-tab" data-week="9">第9周<span class="wbadge">TBD</span></button>
@@ -885,7 +885,7 @@ textarea {
       <button class="week-chip" data-week="9">📅 第9周<span class="date">待定</span></button>
       <button class="week-chip" data-week="8">📅 第8周<span class="date">待定</span></button>
       <button class="week-chip" data-week="7">📅 第7周<span class="date">待定</span></button>
-      <button class="week-chip" data-week="6">📅 第6周<span class="date">6/29</span></button>
+      <button class="week-chip" data-week="6">📅 第6周<span class="date">待定</span></button>
       <button class="week-chip" data-week="5">📅 第5周<span class="date">6/22</span></button>
       <button class="week-chip" data-week="4">📅 第4周<span class="date">6/17</span></button>
       <button class="week-chip selected" data-week="3">🔥 第3周<span class="date">6/9</span></button>
@@ -897,13 +897,11 @@ textarea {
   <div class="form-group">
     <label class="form-label">选择类型</label>
     <div class="type-chips" id="typeChips">
-      <button class="type-chip selected" data-type="作业">📝 本周作业</button>
-      <button class="type-chip" data-type="践行">💫 每日践行</button>
-      <button class="type-chip" data-type="分享">💬 本周分享</button>
-      <button class="type-chip" data-type="觉察">🔍 每日觉察</button>
-      <button class="type-chip" data-type="答疑">❓ 学员答疑</button>
+      <button class="type-chip selected" data-type="本周作业">📝 本周作业</button>
+      <button class="type-chip" data-type="本周分享">💬 本周分享</button>
+      <button class="type-chip" data-type="学员答疑">❓ 学员答疑</button>
     </div>
-    <input type="hidden" id="typeValue" value="作业">
+    <input type="hidden" id="typeValue" value="本周作业">
   </div>
   <div class="form-group">
     <label class="form-label"><span class="required">●</span> 作业内容</label>
@@ -1423,22 +1421,7 @@ const BITABLE_DATA = {
 
 
 
-// ====== ATTENDANCE DATA ======
-// Loaded from attendance.json, NEVER hardcoded in index.html
-let _attendanceData = null;
-const ATTENDANCE_CACHE_KEY = 'bairiying_attendance_cache';
-function loadAttendanceData() {
-  return fetch('attendance.json?' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      _attendanceData = data;
-      try { localStorage.setItem(ATTENDANCE_CACHE_KEY, JSON.stringify(data)); } catch(e) {}
-      console.log('[Attendance] Loaded: ' + data.length + ' weeks');
-    })
-    .catch(function() {
-      try { var c = localStorage.getItem(ATTENDANCE_CACHE_KEY); if(c) { _attendanceData = JSON.parse(c); console.log('[Attendance] From cache'); } } catch(e) {}
-    });
-}
+const ATTENDANCE_ALL = [{"week": 1, "weekLabel": "第1周", "date": "05/25（周一）", "刘瑛茹": 1, "张冬梅": 0, "喻荔": 1, "陈伟玲": 0, "黄语柔": 1, "刘艳红": 0, "林小媚": 1, "吴瑞乾": 1, "赵华海": 1, "杨艳辉": 1, "张惠金": 1, "黄爱优": 1, "周劭峥": 1, "刘彩丽": 1, "李瑞颜": 0, "杨敏": 1, "周文源": 1, "钟智敏": 1, "尤夏靖": 0, "王碧娟": 1, "黄学隆": 1, "郑诗韵": 1, "郑柳": 1, "莫燕青": 1, "刘师": 1, "王璐璐": 1, "毛梓晰": 1, "王鹏圣": 1, "庞晓冰": 1, "吴文迪": 1, "黄杰梅": 1, "周青艳": 1, "卢有珍": 1, "李季连": 1, "蔡学敏": 1, "谭丽韵": 1, "谭碧怡": 0, "蔡泽丽": 0, "黄海啦": 1, "余妙平": 0, "梁沛琪": 0, "冼兆明": 1, "李瑞娜": 1, "霍立韵": 1, "郑丹妮": 1, "麦瑞开": 1, "黄惠筠": 1, "宁小漫": 1, "刘水燕": 1, "谭燕英": 1, "吴玉华": 1, "张静雯": 1, "蔡小红": 1, "雷艳明": 1, "谢敏航": 1, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 1, "戴金梅": 0}, {"week": 2, "weekLabel": "第2周", "date": "06/03（周二）", "刘瑛茹": 1, "张冬梅": 0, "喻荔": 1, "陈伟玲": 0, "黄语柔": 1, "刘艳红": 1, "林小媚": 0, "吴瑞乾": 1, "赵华海": 1, "杨艳辉": 1, "张惠金": 1, "黄爱优": 1, "周劭峥": 1, "刘彩丽": 1, "李瑞颜": 0, "杨敏": 1, "周文源": 1, "钟智敏": 1, "尤夏靖": 0, "王碧娟": 0, "黄学隆": 1, "郑诗韵": 0, "郑柳": 1, "莫燕青": 1, "刘师": 1, "王璐璐": 1, "毛梓晰": 0, "王鹏圣": 0, "庞晓冰": 1, "吴文迪": 1, "黄杰梅": 0, "周青艳": 0, "卢有珍": 1, "李季连": 0, "蔡学敏": 1, "谭丽韵": 1, "谭碧怡": 0, "蔡泽丽": 0, "黄海啦": 1, "余妙平": 0, "梁沛琪": 1, "冼兆明": 0, "李瑞娜": 0, "霍立韵": 1, "郑丹妮": 1, "麦瑞开": 0, "黄惠筠": 1, "宁小漫": 0, "刘水燕": 1, "谭燕英": 1, "吴玉华": 1, "张静雯": 1, "蔡小红": 1, "雷艳明": 1, "谢敏航": 1, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 1, "戴金梅": 0}, {"week": 3, "weekLabel": "第3周", "date": "06/09（周二）", "刘瑛茹": 1, "张冬梅": 0, "喻荔": 0, "陈伟玲": 0, "黄语柔": 1, "刘艳红": 1, "林小媚": 0, "吴瑞乾": 1, "赵华海": 1, "杨艳辉": 1, "张惠金": 1, "黄爱优": 1, "周劭峥": 1, "刘彩丽": 1, "李瑞颜": 1, "杨敏": 1, "周文源": 1, "钟智敏": 1, "尤夏靖": 1, "王碧娟": 0, "黄学隆": 1, "郑诗韵": 1, "郑柳": 1, "莫燕青": 0, "刘师": 1, "王璐璐": 1, "毛梓晰": 0, "王鹏圣": 1, "庞晓冰": 1, "吴文迪": 1, "黄杰梅": 0, "周青艳": 0, "卢有珍": 1, "李季连": 0, "蔡学敏": 1, "谭丽韵": 1, "谭碧怡": 0, "蔡泽丽": 0, "黄海啦": 1, "余妙平": 0, "梁沛琪": 0, "冼兆明": 1, "李瑞娜": 1, "霍立韵": 1, "郑丹妮": 1, "麦瑞开": 0, "黄惠筠": 1, "宁小漫": 1, "刘水燕": 0, "谭燕英": 1, "吴玉华": 1, "张静雯": 1, "蔡小红": 0, "雷艳明": 1, "谢敏航": 1, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 1, "戴金梅": 0}, {"week": 4, "weekLabel": "第4周", "date": "06/17（周三）", "刘瑛茹": 1, "张冬梅": 0, "喻荔": 0, "陈伟玲": 0, "黄语柔": 0, "刘艳红": 0, "林小媚": 0, "吴瑞乾": 1, "赵华海": 0, "杨艳辉": 1, "张惠金": 1, "黄爱优": 1, "周劭峥": 1, "刘彩丽": 1, "李瑞颜": 1, "杨敏": 1, "周文源": 1, "钟智敏": 1, "尤夏靖": 1, "王碧娟": 1, "黄学隆": 1, "郑诗韵": 0, "郑柳": 1, "莫燕青": 0, "刘师": 1, "王璐璐": 1, "毛梓晰": 0, "王鹏圣": 0, "庞晓冰": 1, "吴文迪": 1, "黄杰梅": 0, "周青艳": 0, "卢有珍": 1, "李季连": 1, "蔡学敏": 1, "谭丽韵": 1, "谭碧怡": 0, "蔡泽丽": 1, "黄海啦": 1, "余妙平": 0, "梁沛琪": 0, "冼兆明": 0, "李瑞娜": 0, "霍立韵": 0, "郑丹妮": 1, "麦瑞开": 0, "黄惠筠": 1, "宁小漫": 0, "刘水燕": 0, "谭燕英": 1, "吴玉华": 1, "张静雯": 1, "蔡小红": 1, "雷艳明": 1, "谢敏航": 0, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 1, "戴金梅": 0}, {"week": 5, "weekLabel": "第5周", "date": "06/22（周日）", "刘瑛茹": 0, "张冬梅": 0, "喻荔": 0, "陈伟玲": 0, "黄语柔": 0, "刘艳红": 0, "林小媚": 0, "吴瑞乾": 0, "赵华海": 0, "杨艳辉": 0, "张惠金": 0, "黄爱优": 0, "周劭峥": 0, "刘彩丽": 0, "李瑞颜": 0, "杨敏": 0, "周文源": 0, "钟智敏": 0, "尤夏靖": 0, "王碧娟": 0, "黄学隆": 0, "郑诗韵": 0, "郑柳": 0, "莫燕青": 0, "刘师": 0, "王璐璐": 0, "毛梓晰": 0, "王鹏圣": 0, "庞晓冰": 0, "吴文迪": 0, "黄杰梅": 0, "周青艳": 0, "卢有珍": 0, "李季连": 0, "蔡学敏": 0, "谭丽韵": 0, "谭碧怡": 0, "蔡泽丽": 0, "黄海啦": 0, "余妙平": 0, "梁沛琪": 0, "冼兆明": 0, "李瑞娜": 0, "霍立韵": 0, "郑丹妮": 0, "麦瑞开": 0, "黄惠筠": 0, "宁小漫": 0, "刘水燕": 0, "谭燕英": 0, "吴玉华": 0, "张静雯": 0, "蔡小红": 0, "雷艳明": 0, "谢敏航": 0, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 0, "戴金梅": 0}];
 
 
 const LEADERS = {'1组':'刘瑛茹','2组':'杨艳辉','3组':'钟智敏','4组':'毛梓晰','5组':'蔡学敏','6组':'霍立韵','7组':'蔡小红'};
@@ -1803,7 +1786,7 @@ function resetLocalMap() { _localMap = null; }
 
 let activeGroup = 'all', activeFilter = 'all', searchQuery = '', activeWeek = 'all';
 
-function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){ resetLocalMap(); applyFilters(); }); bindEvents(); renderAttendanceTable(); }
+function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();}); bindEvents(); setTimeout(renderAttendanceTable, 100); }
 
 function renderGroupTabs() {
   const c = document.getElementById('groupTabs');
@@ -1820,11 +1803,11 @@ function _getW(m, w) {
   const hwLocal = getLocalCount(localMap, m.name, w, 'homework');
   const prLocal = getLocalCount(localMap, m.name, w, 'practice');
   const shLocal = getLocalCount(localMap, m.name, w, 'sharing');
-  // Merge attendance from _attendanceData (attendance.json), DATA, and localStorage
+  // Merge attendance from ATTENDANCE_ALL (authoritative), DATA, and localStorage
   let attEmbedded = 0;
-  // 1. _attendanceData is the single source of truth
-  if (_attendanceData) {
-    var aw = _attendanceData.find(function(wd) { return wd.week === w; });
+  // 1. ATTENDANCE_ALL is the single source of truth
+  if (typeof ATTENDANCE_ALL !== 'undefined') {
+    var aw = ATTENDANCE_ALL.find(function(wd) { return wd.week === w; });
     if (aw && aw[m.name] === 1) attEmbedded = 1;
   }
   // 2. Fallback to DATA embedded values
@@ -1892,7 +1875,7 @@ function buildCard(m) {
   let h='<div class="member-card '+getBorderClass(m)+'" onclick="showDetail(\''+m.name.replace(/'/g,"\\'")+'\')">';
   h+='<div class="card-header"><div class="card-name">'+m.name+(m.is_leader?' <span class="card-badge badge-leader">组长</span>':'')+'</div>';
   h+='<span class="card-badge '+getBadgeClass(m)+'">'+wstatus+'</span></div>';
-  h+='<div class="card-meta"><span style="font-weight:600;color:var(--accent)">'+m.group+'</span><span>'+genderIcon+' '+(m.gender==='男'?'男':'女')+'</span><span>&#128205; '+m.region+'</span><span>&#128100; '+m.referee+'</span><span style="color:#b0a99f;font-size:10px">'+m.newcomer+'</span></div>';
+  h+='<div class="card-meta"><span>'+genderIcon+' '+(m.gender==='男'?'男':'女')+'</span><span>&#128205; '+m.region+'</span><span>&#128100; '+m.referee+'</span><span style="color:#b0a99f;font-size:10px">'+m.newcomer+'</span></div>';
   if (ws.showAwareness) h+=buildProgressRow('每日觉察',ws.awareness,ws.awarenessMax);
   h+=buildProgressRow('本周作业',ws.hwCount||0,(ws.hwCount||ws.homeworkMax));
   h+=buildProgressRow('每日践行',ws.prCount||0,(ws.prCount||ws.practiceMax));
@@ -1917,12 +1900,12 @@ function showDetail(name) {
   const localMap = getLocalMap();
   const genderIcon=m.gender==='男'?'&#9794;':'&#9792;';
   let h='<div class="detail-name">'+m.name+'</div>';
-  h+='<div class="detail-meta"><strong style="color:var(--accent)">'+m.group+'</strong> &middot; '+genderIcon+' '+(m.gender==='男'?'男':'女')+' &middot; &#128205; '+m.region+' &middot; &#128100; '+m.referee+' &middot; '+m.newcomer+'<br/>';
+  h+='<div class="detail-meta">'+genderIcon+' '+(m.gender==='男'?'男':'女')+' &middot; &#128205; '+m.region+' &middot; &#128100; '+m.referee+' &middot; '+m.newcomer+'<br/>';
   if(m.is_leader)h+='<span class="card-badge badge-leader">组长</span> ';
   const ws=getWeekScores(m);
   h+='<span style="font-size:11px;color:var(--muted)">作业:'+ws.homework+'/'+ws.homeworkMax+' 践行:'+ws.practice+'/'+ws.practiceMax+'</span></div>';
   let hc=false;
-  const weekDates={1:'5/21-5/25',2:'6/3',3:'6/9',4:'6/17',5:'6/22',6:'6/29'};
+  const weekDates={1:'5/21-5/25',2:'6/3',3:'6/9',4:'6/17',5:'6/22'};
   for(let w=14;w>=1;w--){
     if(activeWeek!=='all'&&activeWeek!==String(w))continue;
     const wk='w'+w, a=m.assignments;
@@ -2093,80 +2076,59 @@ function bindEvents() {
 }
 
 function renderAttendanceTable() {
-  var names = DATA.map(function(m) { return m.name; });
-  var nameGroup = {}; DATA.forEach(function(m) { nameGroup[m.name] = m.group; });
-  var attCacheKey = ATTENDANCE_CACHE_KEY;
+  const names = DATA.map(function(m) { return m.name; });
+  const nameGroup = {}; DATA.forEach(function(m) { nameGroup[m.name] = m.group; });
 
-  function doRender(data) {
-    _attendanceData = data;
-    var allWeeks = [];
-    data.forEach(function(w) { allWeeks.push(w.week); });
-    allWeeks.sort(function(a,b) { return a - b; });
+  // Use ATTENDANCE_ALL as the primary attendance source
+  var allWeeks = [];
+  ATTENDANCE_ALL.forEach(function(w) { allWeeks.push(w.week); });
+  allWeeks.sort(function(a,b) { return a - b; });
 
-    var attLocal = {};
-    try { attLocal = JSON.parse(localStorage.getItem('attendanceLocal') || '{}'); } catch(e) {}
+  // Load localStorage attendance as supplement
+  var attLocal = {};
+  try { attLocal = JSON.parse(localStorage.getItem('attendanceLocal') || '{}'); } catch(e) {}
 
-    var headRow = '<tr><th>周次</th><th>日期</th>' + names.map(function(n) { return '<th style="font-size:10px">' + n + '</th>'; }).join('') + '</tr>';
-    var rows = '';
+  const headRow = '<tr><th>周次</th><th>日期</th>' + names.map(function(n) { return '<th style="font-size:10px">' + n + '</th>'; }).join('') + '</tr>';
+  var rows = '';
 
-    allWeeks.forEach(function(w, idx) {
-      if (idx > 0) rows += '<tr class="att-separator"><td colspan="' + (2+names.length) + '"></td></tr>';
-      var weekData = data.find(function(wd) { return wd.week === w; });
-      var wLabel = weekData ? weekData.weekLabel : ('第' + w + '周');
-      var wDate = weekData ? weekData.date : '';
+  allWeeks.forEach(function(w, idx) {
+    if (idx > 0) rows += '<tr class="att-separator"><td colspan="' + (2+names.length) + '"></td></tr>';
+    var weekData = ATTENDANCE_ALL.find(function(wd) { return wd.week === w; });
+    var wLabel = weekData ? weekData.weekLabel : ('第' + w + '周');
+    var wDate = weekData ? weekData.date : '';
 
-      var cells = names.map(function(n) {
-        var v = 0;
-        if (weekData && weekData[n] === 1) v = 1;
-        if (!v) {
-          var g = nameGroup[n];
-          if (g && attLocal[w+'::'+g] && attLocal[w+'::'+g][n] === true) v = 1;
-        }
-        return '<td class="' + (v >= 1 ? 'at-yes' : 'at-no') + '">' + (v >= 1 ? '✓' : '✗') + '</td>';
-      }).join('');
-      rows += '<tr><td><strong>' + wLabel + '</strong></td><td class="col-date">' + wDate + '</td>' + cells + '</tr>';
-    });
-
-    rows += '<tr class="att-separator"><td colspan="' + (2+names.length) + '"></td></tr>';
-    var totalCells = names.map(function(n) {
-      var t = 0;
-      data.forEach(function(wd) { if (wd[n] === 1) t++; });
-      var g = nameGroup[n];
-      Object.keys(attLocal).forEach(function(k) {
-        var parts = k.split('::');
-        if (parts[1] === g && attLocal[k][n] === true) t++;
-      });
-      var s2 = allWeeks.length;
-      return '<td style="font-weight:700;color:' + (t>=s2?'var(--success)':t>0?'var(--warning)':'var(--danger)') + '">' + t + '/' + s2 + '</td>';
+    var cells = names.map(function(n) {
+      var v = 0;
+      // Check ATTENDANCE_ALL first
+      if (weekData && weekData[n] === 1) v = 1;
+      // Check localStorage as supplement
+      if (!v) {
+        var g = nameGroup[n];
+        if (g && attLocal[w+'::'+g] && attLocal[w+'::'+g][n] === true) v = 1;
+      }
+      var cls = v >= 1 ? 'at-yes' : 'at-no';
+      return '<td class="' + cls + '">' + (v >= 1 ? '✓' : '✗') + '</td>';
     }).join('');
-    rows += '<tr class="total-row"><td colspan="2" style="text-align:center;font-weight:700;">📊 累计</td>' + totalCells + '</tr>';
-    document.getElementById('attTable').innerHTML = headRow + rows;
-  }
+    rows += '<tr><td><strong>' + wLabel + '</strong></td><td class="col-date">' + wDate + '</td>' + cells + '</tr>';
+  });
 
-  // 1. Fetch fresh attendance.json FIRST (bypass browser HTTP cache via timestamp)
-  var retries = 3;
-  function tryFetch(attempt) {
-    document.getElementById('attTable').innerHTML = '<tr><td colspan="' + (2+names.length) + '" style="text-align:center;padding:20px;">考勤数据加载中…</td></tr>';
-    fetch('attendance.json?t=' + Date.now())
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        try { localStorage.setItem(attCacheKey, JSON.stringify(data)); } catch(e) {}
-        doRender(data);
-        console.log('[Attendance] Loaded: ' + data.length + ' weeks');
-      })
-      .catch(function(err) {
-        if (attempt > 1) { setTimeout(function() { tryFetch(attempt - 1); }, 800); return; }
-        // 2. Fallback: localStorage cache
-        try {
-          var cached = localStorage.getItem(attCacheKey);
-          if (cached) { _attendanceData = JSON.parse(cached); doRender(_attendanceData); console.log('[Attendance] From cache'); return; }
-        } catch(e) {}
-        // 3. Last resort: data loaded by init()
-        if (_attendanceData) { doRender(_attendanceData); return; }
-        document.getElementById('attTable').innerHTML = '<tr><td colspan="' + (2+names.length) + '" style="text-align:center;padding:20px;color:var(--danger);">考勤数据加载失败，<a href="javascript:void(0)" onclick="renderAttendanceTable()" style="color:var(--accent);">点击重试</a></td></tr>';
-      });
-  }
-  tryFetch(retries);
+  rows += '<tr class="att-separator"><td colspan="' + (2+names.length) + '"></td></tr>';
+  const totalCells = names.map(function(n) {
+    var t = 0;
+    ATTENDANCE_ALL.forEach(function(wd) {
+      if (wd[n] === 1) t++;
+    });
+    // Also count from localStorage
+    var g = nameGroup[n];
+    Object.keys(attLocal).forEach(function(k) {
+      var parts = k.split('::');
+      if (parts[1] === g && attLocal[k][n] === true) t++;
+    });
+    var s2 = allWeeks.length;
+    return '<td style="font-weight:700;color:' + (t>=s2?'var(--success)':t>0?'var(--warning)':'var(--danger)') + '">' + t + '/' + s2 + '</td>';
+  }).join('');
+  rows += '<tr class="total-row"><td colspan="2" style="text-align:center;font-weight:700;">📊 累计</td>' + totalCells + '</tr>';
+  document.getElementById('attTable').innerHTML = headRow + rows;
 }
 
 // ====== INITIALIZATION ======
