@@ -2143,30 +2143,27 @@ function renderAttendanceTable() {
     document.getElementById('attTable').innerHTML = headRow + rows;
   }
 
-  // 1. Already loaded by init()
-  if (_attendanceData) { doRender(_attendanceData); return; }
-
-  // 2. Try localStorage cache immediately
-  try {
-    var cached = localStorage.getItem(attCacheKey);
-    if (cached) { _attendanceData = JSON.parse(cached); doRender(_attendanceData); }
-  } catch(e) {}
-
-  // 3. Fallback: fetch attendance.json directly (with cache buster)
+  // 1. Fetch fresh attendance.json FIRST (bypass browser HTTP cache via timestamp)
   var retries = 3;
   function tryFetch(attempt) {
-    document.getElementById('attTable').innerHTML = '<tr><td colspan="' + (2+names.length) + '" style="text-align:center;padding:20px;">考勤数据加载中…(' + attempt + '/3)</td></tr>';
-    fetch('attendance.json?v=' + Date.now())
+    document.getElementById('attTable').innerHTML = '<tr><td colspan="' + (2+names.length) + '" style="text-align:center;padding:20px;">考勤数据加载中…</td></tr>';
+    fetch('attendance.json?t=' + Date.now())
       .then(function(r) { return r.json(); })
       .then(function(data) {
         try { localStorage.setItem(attCacheKey, JSON.stringify(data)); } catch(e) {}
         doRender(data);
-        console.log('[Attendance] Loaded via fallback fetch: ' + data.length + ' weeks');
+        console.log('[Attendance] Loaded: ' + data.length + ' weeks');
       })
       .catch(function(err) {
-        console.warn('[Attendance] Fetch attempt ' + attempt + ' failed:', err);
-        if (attempt > 1) { setTimeout(function() { tryFetch(attempt - 1); }, 1500); }
-        else { document.getElementById('attTable').innerHTML = '<tr><td colspan="' + (2+names.length) + '" style="text-align:center;padding:20px;color:var(--danger);">考勤数据加载失败，请 <a href="javascript:void(0)" onclick="renderAttendanceTable()" style="color:var(--accent);">点击重试</a></td></tr>'; }
+        if (attempt > 1) { setTimeout(function() { tryFetch(attempt - 1); }, 800); return; }
+        // 2. Fallback: localStorage cache
+        try {
+          var cached = localStorage.getItem(attCacheKey);
+          if (cached) { _attendanceData = JSON.parse(cached); doRender(_attendanceData); console.log('[Attendance] From cache'); return; }
+        } catch(e) {}
+        // 3. Last resort: data loaded by init()
+        if (_attendanceData) { doRender(_attendanceData); return; }
+        document.getElementById('attTable').innerHTML = '<tr><td colspan="' + (2+names.length) + '" style="text-align:center;padding:20px;color:var(--danger);">考勤数据加载失败，<a href="javascript:void(0)" onclick="renderAttendanceTable()" style="color:var(--accent);">点击重试</a></td></tr>';
       });
   }
   tryFetch(retries);
