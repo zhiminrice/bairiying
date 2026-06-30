@@ -799,7 +799,7 @@ textarea {
     <button class="week-tab" data-week="3">🔥 第3周<span class="wbadge">6/9</span></button>
     <button class="week-tab" data-week="4">第4周<span class="wbadge">6/17</span></button>
     <button class="week-tab" data-week="5">第5周<span class="wbadge">6/22</span></button>
-    <button class="week-tab" data-week="6">第6周<span class="wbadge">TBD</span></button>
+    <button class="week-tab" data-week="6">第6周<span class="wbadge">6/29</span></button>
     <button class="week-tab" data-week="7">第7周<span class="wbadge">TBD</span></button>
     <button class="week-tab" data-week="8">第8周<span class="wbadge">TBD</span></button>
     <button class="week-tab" data-week="9">第9周<span class="wbadge">TBD</span></button>
@@ -885,7 +885,7 @@ textarea {
       <button class="week-chip" data-week="9">📅 第9周<span class="date">待定</span></button>
       <button class="week-chip" data-week="8">📅 第8周<span class="date">待定</span></button>
       <button class="week-chip" data-week="7">📅 第7周<span class="date">待定</span></button>
-      <button class="week-chip" data-week="6">📅 第6周<span class="date">待定</span></button>
+      <button class="week-chip" data-week="6">📅 第6周<span class="date">6/29</span></button>
       <button class="week-chip" data-week="5">📅 第5周<span class="date">6/22</span></button>
       <button class="week-chip" data-week="4">📅 第4周<span class="date">6/17</span></button>
       <button class="week-chip selected" data-week="3">🔥 第3周<span class="date">6/9</span></button>
@@ -1905,7 +1905,7 @@ function showDetail(name) {
   const ws=getWeekScores(m);
   h+='<span style="font-size:11px;color:var(--muted)">作业:'+ws.homework+'/'+ws.homeworkMax+' 践行:'+ws.practice+'/'+ws.practiceMax+'</span></div>';
   let hc=false;
-  const weekDates={1:'5/21-5/25',2:'6/3',3:'6/9',4:'6/17',5:'6/22'};
+  const weekDates={1:'5/21-5/25',2:'6/3',3:'6/9',4:'6/17',5:'6/22',6:'6/29'};
   for(let w=14;w>=1;w--){
     if(activeWeek!=='all'&&activeWeek!==String(w))continue;
     const wk='w'+w, a=m.assignments;
