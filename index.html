@@ -2093,60 +2093,83 @@ function bindEvents() {
 }
 
 function renderAttendanceTable() {
-  const names = DATA.map(function(m) { return m.name; });
-  const nameGroup = {}; DATA.forEach(function(m) { nameGroup[m.name] = m.group; });
+  var names = DATA.map(function(m) { return m.name; });
+  var nameGroup = {}; DATA.forEach(function(m) { nameGroup[m.name] = m.group; });
+  var attCacheKey = ATTENDANCE_CACHE_KEY;
 
-  // Use _attendanceData as the primary attendance source
-  if (!_attendanceData) { document.getElementById('attTable').innerHTML = '<tr><td colspan="' + (2+names.length) + '" style="text-align:center;padding:20px;">考勤数据加载中…</td></tr>'; return; }
-  var allWeeks = [];
-  _attendanceData.forEach(function(w) { allWeeks.push(w.week); });
-  allWeeks.sort(function(a,b) { return a - b; });
+  function doRender(data) {
+    _attendanceData = data;
+    var allWeeks = [];
+    data.forEach(function(w) { allWeeks.push(w.week); });
+    allWeeks.sort(function(a,b) { return a - b; });
 
-  // Load localStorage attendance as supplement
-  var attLocal = {};
-  try { attLocal = JSON.parse(localStorage.getItem('attendanceLocal') || '{}'); } catch(e) {}
+    var attLocal = {};
+    try { attLocal = JSON.parse(localStorage.getItem('attendanceLocal') || '{}'); } catch(e) {}
 
-  const headRow = '<tr><th>周次</th><th>日期</th>' + names.map(function(n) { return '<th style="font-size:10px">' + n + '</th>'; }).join('') + '</tr>';
-  var rows = '';
+    var headRow = '<tr><th>周次</th><th>日期</th>' + names.map(function(n) { return '<th style="font-size:10px">' + n + '</th>'; }).join('') + '</tr>';
+    var rows = '';
 
-  allWeeks.forEach(function(w, idx) {
-    if (idx > 0) rows += '<tr class="att-separator"><td colspan="' + (2+names.length) + '"></td></tr>';
-    var weekData = _attendanceData.find(function(wd) { return wd.week === w; });
-    var wLabel = weekData ? weekData.weekLabel : ('第' + w + '周');
-    var wDate = weekData ? weekData.date : '';
+    allWeeks.forEach(function(w, idx) {
+      if (idx > 0) rows += '<tr class="att-separator"><td colspan="' + (2+names.length) + '"></td></tr>';
+      var weekData = data.find(function(wd) { return wd.week === w; });
+      var wLabel = weekData ? weekData.weekLabel : ('第' + w + '周');
+      var wDate = weekData ? weekData.date : '';
 
-    var cells = names.map(function(n) {
-      var v = 0;
-      // Check _attendanceData first
-      if (weekData && weekData[n] === 1) v = 1;
-      // Check localStorage as supplement
-      if (!v) {
-        var g = nameGroup[n];
-        if (g && attLocal[w+'::'+g] && attLocal[w+'::'+g][n] === true) v = 1;
-      }
-      var cls = v >= 1 ? 'at-yes' : 'at-no';
-      return '<td class="' + cls + '">' + (v >= 1 ? '✓' : '✗') + '</td>';
+      var cells = names.map(function(n) {
+        var v = 0;
+        if (weekData && weekData[n] === 1) v = 1;
+        if (!v) {
+          var g = nameGroup[n];
+          if (g && attLocal[w+'::'+g] && attLocal[w+'::'+g][n] === true) v = 1;
+        }
+        return '<td class="' + (v >= 1 ? 'at-yes' : 'at-no') + '">' + (v >= 1 ? '✓' : '✗') + '</td>';
+      }).join('');
+      rows += '<tr><td><strong>' + wLabel + '</strong></td><td class="col-date">' + wDate + '</td>' + cells + '</tr>';
+    });
+
+    rows += '<tr class="att-separator"><td colspan="' + (2+names.length) + '"></td></tr>';
+    var totalCells = names.map(function(n) {
+      var t = 0;
+      data.forEach(function(wd) { if (wd[n] === 1) t++; });
+      var g = nameGroup[n];
+      Object.keys(attLocal).forEach(function(k) {
+        var parts = k.split('::');
+        if (parts[1] === g && attLocal[k][n] === true) t++;
+      });
+      var s2 = allWeeks.length;
+      return '<td style="font-weight:700;color:' + (t>=s2?'var(--success)':t>0?'var(--warning)':'var(--danger)') + '">' + t + '/' + s2 + '</td>';
     }).join('');
-    rows += '<tr><td><strong>' + wLabel + '</strong></td><td class="col-date">' + wDate + '</td>' + cells + '</tr>';
-  });
+    rows += '<tr class="total-row"><td colspan="2" style="text-align:center;font-weight:700;">📊 累计</td>' + totalCells + '</tr>';
+    document.getElementById('attTable').innerHTML = headRow + rows;
+  }
 
-  rows += '<tr class="att-separator"><td colspan="' + (2+names.length) + '"></td></tr>';
-  const totalCells = names.map(function(n) {
-    var t = 0;
-    _attendanceData.forEach(function(wd) {
-      if (wd[n] === 1) t++;
-    });
-    // Also count from localStorage
-    var g = nameGroup[n];
-    Object.keys(attLocal).forEach(function(k) {
-      var parts = k.split('::');
-      if (parts[1] === g && attLocal[k][n] === true) t++;
-    });
-    var s2 = allWeeks.length;
-    return '<td style="font-weight:700;color:' + (t>=s2?'var(--success)':t>0?'var(--warning)':'var(--danger)') + '">' + t + '/' + s2 + '</td>';
-  }).join('');
-  rows += '<tr class="total-row"><td colspan="2" style="text-align:center;font-weight:700;">📊 累计</td>' + totalCells + '</tr>';
-  document.getElementById('attTable').innerHTML = headRow + rows;
+  // 1. Already loaded by init()
+  if (_attendanceData) { doRender(_attendanceData); return; }
+
+  // 2. Try localStorage cache immediately
+  try {
+    var cached = localStorage.getItem(attCacheKey);
+    if (cached) { _attendanceData = JSON.parse(cached); doRender(_attendanceData); }
+  } catch(e) {}
+
+  // 3. Fallback: fetch attendance.json directly (with cache buster)
+  var retries = 3;
+  function tryFetch(attempt) {
+    document.getElementById('attTable').innerHTML = '<tr><td colspan="' + (2+names.length) + '" style="text-align:center;padding:20px;">考勤数据加载中…(' + attempt + '/3)</td></tr>';
+    fetch('attendance.json?v=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        try { localStorage.setItem(attCacheKey, JSON.stringify(data)); } catch(e) {}
+        doRender(data);
+        console.log('[Attendance] Loaded via fallback fetch: ' + data.length + ' weeks');
+      })
+      .catch(function(err) {
+        console.warn('[Attendance] Fetch attempt ' + attempt + ' failed:', err);
+        if (attempt > 1) { setTimeout(function() { tryFetch(attempt - 1); }, 1500); }
+        else { document.getElementById('attTable').innerHTML = '<tr><td colspan="' + (2+names.length) + '" style="text-align:center;padding:20px;color:var(--danger);">考勤数据加载失败，请 <a href="javascript:void(0)" onclick="renderAttendanceTable()" style="color:var(--accent);">点击重试</a></td></tr>'; }
+      });
+  }
+  tryFetch(retries);
 }
 
 // ====== INITIALIZATION ======
