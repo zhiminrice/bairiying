@@ -1803,7 +1803,7 @@ function resetLocalMap() { _localMap = null; }
 
 let activeGroup = 'all', activeFilter = 'all', searchQuery = '', activeWeek = 'all';
 
-function init() { loadGroups().then(function(){ return loadAttendanceData(); }).then(function(){ renderGroupTabs(); fetchRelaySubmissions().then(function(){ resetLocalMap(); applyFilters(); }); renderAttendanceTable(); }).catch(function(){ renderGroupTabs(); renderAttendanceTable(); }); bindEvents(); }
+function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){ resetLocalMap(); applyFilters(); }); bindEvents(); renderAttendanceTable(); }
 
 function renderGroupTabs() {
   const c = document.getElementById('groupTabs');
