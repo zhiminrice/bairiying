@@ -1435,8 +1435,27 @@ const GROUPS = {
   '4组': { leader:'毛梓晰', members:['毛梓晰','王鹏圣','庞晓冰','吴文迪','黄杰梅','周青艳','卢有珍','李季连'] },
   '5组': { leader:'蔡学敏', members:['蔡学敏','谭丽韵','谭碧怡','蔡泽丽','黄海啦','余妙平','梁沛琪','冼兆明','李瑞娜'] },
   '6组': { leader:'霍立韵', members:['霍立韵','郑丹妮','麦瑞开','黄惠筠','宁小漫','刘水燕','谭燕英','吴玉华','张静雯'] },
-  '7组': { leader:'蔡小红', members:['蔡小红','雷艳明','谢敏航','沈杨群','肖桂梅','邓琳','龙振荣','陈巧莲','吕培芝'] }
+  '7组': { leader:'蔡小红', members:['蔡小红','雷艳明','谢敏航','沈杨群','肖桂梅','邓琳','龙振荣','陈巧莲','吕培芝','戴金梅'] }
 };
+
+// ====== GROUPS SYNC: async fetch from groups.json to keep GROUPS in sync ======
+function syncGroupsFromJSON() {
+  fetch('groups.json?t=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      // Merge into existing GROUPS (preserve hardcoded as fallback)
+      Object.keys(data).forEach(function(k) {
+        if (GROUPS[k]) {
+          GROUPS[k].leader = data[k].leader;
+          GROUPS[k].members = data[k].members;
+        } else {
+          GROUPS[k] = data[k];
+        }
+      });
+      console.log('[Groups] Synced from groups.json: ' + Object.keys(data).length + ' groups');
+    })
+    .catch(function() { /* silent - hardcoded GROUPS is the fallback */ });
+}
 
 // ====== LOCAL STORAGE KEY ======
 const STORAGE_KEY = 'submittedLocal';
@@ -1786,7 +1805,7 @@ function resetLocalMap() { _localMap = null; }
 
 let activeGroup = 'all', activeFilter = 'all', searchQuery = '', activeWeek = 'all';
 
-function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();}); bindEvents(); setTimeout(renderAttendanceTable, 100); }
+function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();}); bindEvents(); setTimeout(renderAttendanceTable, 100); syncGroupsFromJSON(); }
 
 function renderGroupTabs() {
   const c = document.getElementById('groupTabs');
