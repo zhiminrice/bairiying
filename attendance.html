@@ -2,10 +2,14 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>百日营 · 出勤记录</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+
+  <!-- 品牌设计变量 -->
+  <link rel="stylesheet" href="colors_and_type.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="desktop.css">
 <style>
 /* ====== SHARED RESET & VARIABLES ====== */
 :root {
@@ -477,6 +481,18 @@ body::before {
 </style>
 </head>
 <body>
+  <!-- ========== 桌面端顶部导航 ========== -->
+  <nav class="desktop-nav">
+    <span class="nav-brand">百日营</span>
+    <div class="nav-links">
+      <a href="./index.html" class="nav-link">📊 总览</a>
+      <a href="./review.html" class="nav-link">📝 点评</a>
+      <a href="./submit.html" class="nav-link">✍️ 提交</a>
+      <a href="./attendance.html" class="nav-link active">📋 出勤</a>
+      <a href="./profile.html" class="nav-link">👤 档案</a>
+    </div>
+  </nav>
+
 
 <!-- MAIN WRAPPER -->
 <div class="main-wrapper">
