@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>学员档案 - 百日营</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* --- Profile Card --- */
+    .profile-card {
+      padding: 16px;
+    }
+
+    .profile-card__header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .profile-card__info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .profile-card__name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 3px;
+    }
+
+    .profile-card__name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: var(--font-serif);
+    }
+
+    .profile-card__group-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .profile-card__data {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .profile-card__data-cell {
+      text-align: center;
+      padding: 8px 4px;
+      background: var(--copper-bg);
+      border-radius: var(--radius-sm);
+    }
+
+    .profile-card__data-num {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--copper-dark);
+      font-family: var(--font-serif);
+      line-height: 1.2;
+    }
+
+    .profile-card__data-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .profile-card__progress {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile-card__progress-pct {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--copper-dark);
+      font-family: var(--font-serif);
+      min-width: 36px;
+      text-align: right;
+    }
+
+    /* Status variants */
+    .badge-status--active {
+      background: #ECFDF5;
+      color: #065F46;
+      border: 1px solid #A7F3D0;
+    }
+
+    .badge-status--moderate {
+      background: #FFFBEB;
+      color: #92400E;
+      border: 1px solid #FDE68A;
+    }
+
+    .badge-status--inactive {
+      background: #F3F4F6;
+      color: #6B7280;
+      border: 1px solid #E5E7EB;
+    }
+
+    /* Loading / Error */
+    .loading-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-muted);
+    }
+
+    .loading-state__spinner {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--copper-bg-2);
+      border-top-color: var(--copper);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Page Header -->
+    <header class="page-header">
+      <div class="subtitle">百日营 &#183; 学员档案</div>
+      <h1 class="title">学员档案</h1>
+    </header>
+
+    <!-- Search Box -->
+    <div class="search-box">
+      <span class="search-box__icon">&#128269;</span>
+      <input
+        class="search-box__input"
+        type="text"
+        id="searchInput"
+        placeholder="搜索学员姓名..."
+        autocomplete="off"
+      >
+    </div>
+
+    <!-- Group Filter Chips -->
+    <div class="filter-chips" id="filterChips">
+      <button class="filter-chip filter-chip--active" data-group="all">全部</button>
+      <button class="filter-chip" data-group="1组">1组</button>
+      <button class="filter-chip" data-group="2组">2组</button>
+      <button class="filter-chip" data-group="3组">3组</button>
+      <button class="filter-chip" data-group="4组">4组</button>
+      <button class="filter-chip" data-group="5组">5组</button>
+      <button class="filter-chip" data-group="6组">6组</button>
+      <button class="filter-chip" data-group="7组">7组</button>
+    </div>
+
+    <!-- Profile Cards -->
+    <div id="profileContainer">
+      <div class="loading-state">
+        <div class="loading-state__spinner"></div>
+        <div class="empty-state__text">正在加载学员数据...</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="page-footer">
+      <span class="page-footer__text" id="footerText">显示 0/62 名学员</span>
+    </div>
+  </div>
+
+  <!-- Bottom Tab Navigation -->
+  <nav class="tab-nav">
+    <a class="tab-nav__item" href="./">
+      <span class="tab-icon">&#128202;</span>
+      <span>总览</span>
+    </a>
+    <a class="tab-nav__item" href="review.html">
+      <span class="tab-icon">&#128221;</span>
+      <span>点评</span>
+    </a>
+    <a class="tab-nav__item" href="submit.html">
+      <span class="tab-icon">&#9997;&#65039;</span>
+      <span>提交</span>
+    </a>
+    <a class="tab-nav__item" href="attendance.html">
+      <span class="tab-icon">&#128203;</span>
+      <span>出勤</span>
+    </a>
+    <a class="tab-nav__item tab-nav__item--active" href="profile.html">
+      <span class="tab-icon">&#128100;</span>
+      <span>档案</span>
+    </a>
+  </nav>
+
+  <script>
+  // ============================================================
+  //  SCF API 地址（与 index.html 保持一致）
+  // ============================================================
+  var RELAY_URL = 'https://1430780242-0nq7px6f3u.ap-shanghai.tencentscf.com';
+  var TOTAL_WEEKS = 6;
+  var TOTAL_STUDENTS = 62;
+
+  // ============================================================
+  //  全局状态
+  // ============================================================
+  var state = {
+    searchQuery: '',
+    activeGroup: 'all',
+    groups: null,         // groups.json 数据
+    attendance: null,     // attendance.json 数据
+    submissions: null,    // SCF API 提交记录（可选）
+    students: [],         // 处理后的学员列表
+  };
+
+  // ============================================================
+  //  数据加载
+  // ============================================================
+
+  function fetchJSON(url) {
+    return fetch(url).then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    });
+  }
+
+  function loadData() {
+    var p1 = fetchJSON('groups.json');
+    var p2 = fetchJSON('attendance.json');
+
+    // 尝试从 SCF 加载提交记录，失败不阻塞
+    var p3 = fetchJSON(RELAY_URL + '/submissions').catch(function() {
+      console.warn('SCF API 不可用，将仅使用出勤数据');
+      return null;
+    });
+
+    return Promise.all([p1, p2, p3]).then(function(results) {
+      state.groups      = results[0];
+      state.attendance  = results[1];
+      state.submissions = results[2];
+      buildStudentList();
+      render();
+    }).catch(function(err) {
+      console.error('数据加载失败:', err);
+      document.getElementById('profileContainer').innerHTML =
+        '<div class="empty-state">' +
+          '<div class="empty-state__icon">&#9888;&#65039;</div>' +
+          '<div class="empty-state__text">数据加载失败，请刷新重试</div>' +
+        '</div>';
+    });
+  }
+
+  // ============================================================
+  //  构建学员列表
+  // ============================================================
+
+  function getInitial(name) {
+    return name.charAt(0);
+  }
+
+  function calcAttendance(name) {
+    var att = state.attendance;
+    if (!att || !Array.isArray(att)) return 0;
+    var count = 0;
+    for (var i = 0; i < att.length; i++) {
+      if (att[i][name] === 1) count++;
+    }
+    return count;
+  }
+
+  function countSubmissionsByType(name, type) {
+    var subs = state.submissions;
+    if (!subs || !subs.records || !Array.isArray(subs.records)) return 0;
+    var count = 0;
+    for (var i = 0; i < subs.records.length; i++) {
+      var r = subs.records[i];
+      var fields = r.fields || {};
+      if (fields['姓名'] === name && fields['作业类型'] === type) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  function countTotalSubmissions(name) {
+    var subs = state.submissions;
+    if (!subs || !subs.records || !Array.isArray(subs.records)) return 0;
+    var count = 0;
+    for (var i = 0; i < subs.records.length; i++) {
+      var r = subs.records[i];
+      var fields = r.fields || {};
+      if (fields['姓名'] === name) count++;
+    }
+    return count;
+  }
+
+  function getStatusLabel(count) {
+    if (count >= 8)  return { text: '活跃', cls: 'badge-status--active' };
+    if (count >= 3)  return { text: '正常', cls: 'badge-status--moderate' };
+    if (count >= 1)  return { text: '起步', cls: 'badge-status--inactive' };
+    return { text: '未启动', cls: 'badge-status--inactive' };
+  }
+
+  function buildStudentList() {
+    var groups = state.groups;
+    var list = [];
+
+    var groupOrder = ['1组','2组','3组','4组','5组','6组','7组'];
+    for (var gi = 0; gi < groupOrder.length; gi++) {
+      var groupName = groupOrder[gi];
+      var g = groups[groupName];
+      if (!g) continue;
+      var leader = g.leader;
+      var members = g.members || [];
+
+      for (var mi = 0; mi < members.length; mi++) {
+        var name = members[mi];
+        var attendanceCount = calcAttendance(name);
+        var homeworkCount   = countSubmissionsByType(name, '本周作业');
+        var awarenessCount  = countSubmissionsByType(name, '每日觉察');
+        var practiceCount   = countSubmissionsByType(name, '每日践行');
+        var totalSubs       = countTotalSubmissions(name);
+        var statusInfo      = getStatusLabel(totalSubs);
+        var isLeader        = (name === leader);
+
+        // 综合进度分数：出勤 40% + 作业提交 60%
+        var attPct   = Math.min(attendanceCount / TOTAL_WEEKS, 1) * 0.4;
+        var subPct   = Math.min(totalSubs / (TOTAL_WEEKS * 3), 1) * 0.6;
+        var progress = Math.round((attPct + subPct) * 100);
+
+        list.push({
+          name: name,
+          group: groupName,
+          isLeader: isLeader,
+          attendance: attendanceCount,
+          homework: homeworkCount,
+          awareness: awarenessCount,
+          practice: practiceCount,
+          totalSubs: totalSubs,
+          progress: progress,
+          statusLabel: statusInfo.text,
+          statusClass: statusInfo.cls,
+          initial: getInitial(name)
+        });
+      }
+    }
+
+    state.students = list;
+  }
+
+  // ============================================================
+  //  渲染
+  // ============================================================
+
+  function renderProfileCard(s) {
+    return (
+      '<div class="card profile-card">' +
+        /* 头像区 + 个人信息 */
+        '<div class="profile-card__header">' +
+          '<div class="avatar avatar--lg">' + s.initial + '</div>' +
+          '<div class="profile-card__info">' +
+            '<div class="profile-card__name-row">' +
+              '<span class="profile-card__name">' + s.name + '</span>' +
+              '<span class="badge badge-role">' + (s.isLeader ? '组长' : '组员') + '</span>' +
+              '<span class="badge ' + s.statusClass + '">' + s.statusLabel + '</span>' +
+            '</div>' +
+            '<div class="profile-card__group-row">' +
+              '<span class="badge badge-group">' + s.group + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        /* 数据栏 */
+        '<div class="profile-card__data">' +
+          '<div class="profile-card__data-cell">' +
+            '<div class="profile-card__data-num">' + s.attendance + '/6</div>' +
+            '<div class="profile-card__data-label">出勤</div>' +
+          '</div>' +
+          '<div class="profile-card__data-cell">' +
+            '<div class="profile-card__data-num">' + s.homework + '/6</div>' +
+            '<div class="profile-card__data-label">作业</div>' +
+          '</div>' +
+          '<div class="profile-card__data-cell">' +
+            '<div class="profile-card__data-num">' + s.awareness + '天</div>' +
+            '<div class="profile-card__data-label">觉察</div>' +
+          '</div>' +
+          '<div class="profile-card__data-cell">' +
+            '<div class="profile-card__data-num">' + s.practice + '天</div>' +
+            '<div class="profile-card__data-label">践行</div>' +
+          '</div>' +
+        '</div>' +
+        /* 进度条 */
+        '<div class="profile-card__progress">' +
+          '<div class="progress-bar">' +
+            '<div class="progress-bar__fill" style="width:' + s.progress + '%"></div>' +
+          '</div>' +
+          '<div class="profile-card__progress-pct">' + s.progress + '%</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function render() {
+    var q = state.searchQuery.trim().toLowerCase();
+    var g = state.activeGroup;
+
+    var filtered = state.students.filter(function(s) {
+      var matchGroup = (g === 'all' || s.group === g);
+      var matchSearch = !q || s.name.toLowerCase().indexOf(q) !== -1;
+      return matchGroup && matchSearch;
+    });
+
+    var container = document.getElementById('profileContainer');
+    if (filtered.length === 0) {
+      container.innerHTML =
+        '<div class="empty-state">' +
+          '<div class="empty-state__icon">&#128270;</div>' +
+          '<div class="empty-state__text">没有找到匹配的学员</div>' +
+        '</div>';
+    } else {
+      var html = '';
+      for (var i = 0; i < filtered.length; i++) {
+        html += renderProfileCard(filtered[i]);
+      }
+      container.innerHTML = html;
+    }
+
+    document.getElementById('footerText').textContent =
+      '显示 ' + filtered.length + '/' + state.students.length + ' 名学员';
+  }
+
+  // ============================================================
+  //  事件绑定
+  // ============================================================
+
+  // 搜索框
+  document.getElementById('searchInput').addEventListener('input', function(e) {
+    state.searchQuery = e.target.value;
+    render();
+  });
+
+  // 组别筛选
+  var filterChips = document.querySelectorAll('#filterChips .filter-chip');
+  filterChips.forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      filterChips.forEach(function(c) { c.classList.remove('filter-chip--active'); });
+      chip.classList.add('filter-chip--active');
+      state.activeGroup = chip.getAttribute('data-group');
+      render();
+    });
+  });
+
+  // ============================================================
+  //  启动
+  // ============================================================
+  loadData();
+  </script>
+</body>
+</html>
