@@ -4,216 +4,407 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>百日营 · 总览仪表盘</title>
+
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="colors_and_type.css">
+
+  <!-- 共享设计系统 -->
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="desktop.css">
 </head>
 <body>
-  <nav class="desktop-nav">
-    <span class="nav-brand">百日营</span>
-    <div class="nav-links">
-      <a href="./index.html" class="nav-link active">📊 总览</a>
-      <a href="./review.html" class="nav-link">📝 点评</a>
-      <a href="./submit.html" class="nav-link">✍️ 提交</a>
-      <a href="./attendance.html" class="nav-link">📋 出勤</a>
-      <a href="./profile.html" class="nav-link">👤 档案</a>
-    </div>
-  </nav>
 
 <div class="app-container">
+
+  <!-- ========== 页面标题 ========== -->
   <header class="page-header">
     <p class="page-subtitle">百日营 · 全营</p>
     <h1 class="page-title">总览仪表盘</h1>
   </header>
 
+  <!-- ========== 统计卡片 ========== -->
   <div class="stat-cards" id="statCards">
-    <div class="stat-card"><div class="stat-number" id="statTotalMembers">--</div><div class="stat-label">学员总数</div><div class="stat-sub">7组覆盖</div></div>
-    <div class="stat-card"><div class="stat-number" id="statGroups">7</div><div class="stat-label">小组数</div><div class="stat-sub">每组 8-10 人</div></div>
-    <div class="stat-card"><div class="stat-number" id="statCurrentWeek">第6周</div><div class="stat-label">当前周</div><div class="stat-sub">6/29</div></div>
-    <div class="stat-card"><div class="stat-number" id="statStartDate">5/21</div><div class="stat-label">开营日期</div><div class="stat-sub">2026</div></div>
+    <div class="stat-card">
+      <div class="stat-number" id="statTotalMembers">--</div>
+      <div class="stat-label">学员总数</div>
+      <div class="stat-sub">7组覆盖</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="statGroups">7</div>
+      <div class="stat-label">小组数</div>
+      <div class="stat-sub">每组 8-10 人</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="statCurrentWeek">第6周</div>
+      <div class="stat-label">当前周</div>
+      <div class="stat-sub">进行中</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="statStartDate">5/21</div>
+      <div class="stat-label">开营日期</div>
+      <div class="stat-sub">2025</div>
+    </div>
   </div>
 
-  <div class="filter-chips" id="groupFilter">
-    <button class="filter-chip active" data-group="all">全部</button>
+  <!-- ========== 小组筛选 ========== -->
+  <p class="section-label">小组筛选</p>
+  <div class="chips-scroll" id="groupChips">
+    <button class="group-chip active" data-group="all">全部</button>
   </div>
 
-  <div class="week-chips" id="weekFilter">
+  <!-- ========== 周次选择 ========== -->
+  <p class="section-label">周次选择</p>
+  <div class="chips-scroll" id="weekChips">
     <button class="week-chip active" data-week="all">全部</button>
-    <button class="week-chip" data-week="1">第1周<span class="week-date">5/25</span></button>
-    <button class="week-chip" data-week="2">第2周<span class="week-date">6/3</span></button>
-    <button class="week-chip" data-week="3">第3周<span class="week-date">6/9</span></button>
-    <button class="week-chip" data-week="4">第4周<span class="week-date">6/17</span></button>
-    <button class="week-chip" data-week="5">第5周<span class="week-date">6/22</span></button>
-    <button class="week-chip" data-week="6">第6周<span class="week-date">6/29</span></button>
   </div>
 
+  <!-- ========== 学员进度卡片列表 ========== -->
+  <p class="section-label">学员进度</p>
   <div class="member-list" id="memberList">
-    <div class="loading">加载中…</div>
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>正在加载数据...</p>
+    </div>
   </div>
 
-  <div class="list-footer" id="listFooter">显示 -- / -- 名学员</div>
+  <!-- ========== 底部计数 ========== -->
+  <p class="member-count" id="memberCount">显示 -- / -- 名学员</p>
+
 </div>
 
+<!-- ========== 底部导航栏 ========== -->
 <nav class="bottom-nav">
-  <a href="./index.html" class="nav-item active"><span class="nav-icon">📊</span><span class="nav-label">总览</span></a>
-  <a href="./review.html" class="nav-item"><span class="nav-icon">📝</span><span class="nav-label">点评</span></a>
-  <a href="./submit.html" class="nav-item"><span class="nav-icon">✍️</span><span class="nav-label">提交</span></a>
-  <a href="./attendance.html" class="nav-item"><span class="nav-icon">📋</span><span class="nav-label">出勤</span></a>
-  <a href="./profile.html" class="nav-item"><span class="nav-icon">👤</span><span class="nav-label">档案</span></a>
+  <a href="index.html" class="active">
+    <span class="nav-icon">&#x1F4CA;</span>
+    <span class="nav-label">总览</span>
+  </a>
+  <a href="review.html">
+    <span class="nav-icon">&#x1F4DD;</span>
+    <span class="nav-label">点评</span>
+  </a>
+  <a href="submit.html">
+    <span class="nav-icon">&#x270D;&#xFE0F;</span>
+    <span class="nav-label">提交</span>
+  </a>
+  <a href="attendance.html">
+    <span class="nav-icon">&#x1F4CB;</span>
+    <span class="nav-label">出勤</span>
+  </a>
+  <a href="profile.html">
+    <span class="nav-icon">&#x1F464;</span>
+    <span class="nav-label">档案</span>
+  </a>
 </nav>
 
+<!-- ============================================================
+     JavaScript：数据加载与渲染
+     ============================================================ -->
 <script>
-const RELAY_URL = 'https://1430780242-0nq7px6f3u.ap-shanghai.tencentscf.com';
-let allMembers = [], allGroups = {}, allAttendance = [], allSubmissions = [];
-let activeGroup = 'all', activeWeek = 'all';
+(function() {
+  'use strict';
 
-// Load all data
-// Phase 1: Load groups + attendance (same-origin, always fast)
-Promise.all([
-  fetch('groups.json').then(r=>r.json()),
-  fetch('attendance.json').then(r=>r.json())
-]).then(function(results) {
-  allGroups = results[0];
-  allAttendance = results[1];
-  
-  Object.keys(allGroups).forEach(function(g) {
-    allGroups[g].members.forEach(function(name) {
-      allMembers.push({ name: name, group: g, is_leader: name === allGroups[g].leader });
-    });
-  });
-  
-  document.getElementById('statTotalMembers').textContent = allMembers.length;
-  renderGroupChips();
-  renderMembers();
-  
-  // Phase 2: Load submissions from SCF in background (may be slow)
-  var controller = new AbortController();
-  var timeout = setTimeout(function() { controller.abort(); }, 5000);
-  fetch(RELAY_URL + '/submissions', { signal: controller.signal })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      clearTimeout(timeout);
-      if (data && data.records) allSubmissions = data.records;
-    })
-    .catch(function() { /* silent fail - data will show without submissions */ });
-}).catch(function(err) {
-  console.error('Data load failed:', err);
-  document.getElementById('memberList').innerHTML = '<div class="loading">数据加载失败，请刷新重试</div>';
-});
+  // ----- 配置 -----
+  var RELAY_URL = 'https://1430780242-0nq7px6f3u.ap-shanghai.tencentscf.com';
 
-function renderGroupChips() {
-  var html = '<button class="filter-chip active" data-group="all">全部</button>';
-  Object.keys(allGroups).sort().forEach(function(g) {
-    html += '<button class="filter-chip" data-group="' + g + '">' + g + '<span class="chip-count">' + allGroups[g].members.length + '</span></button>';
-  });
-  document.getElementById('groupFilter').innerHTML = html;
-  
-  document.getElementById('groupFilter').addEventListener('click', function(e) {
-    var chip = e.target.closest('.filter-chip');
-    if (!chip) return;
-    document.querySelectorAll('#groupFilter .filter-chip').forEach(function(c) { c.classList.remove('active'); });
-    chip.classList.add('active');
-    activeGroup = chip.dataset.group;
-    renderMembers();
-  });
-  
-  document.getElementById('weekFilter').addEventListener('click', function(e) {
-    var chip = e.target.closest('.week-chip');
-    if (!chip) return;
-    document.querySelectorAll('#weekFilter .week-chip').forEach(function(c) { c.classList.remove('active'); });
-    chip.classList.add('active');
-    activeWeek = chip.dataset.week;
-    renderMembers();
-  });
-}
+  // ----- 全局状态 -----
+  var groupsData = null;
+  var attendanceData = null;
+  var submissionsData = [];
+  var allMembers = [];          // [{name, group, isLeader}]
+  var selectedGroup = 'all';
+  var selectedWeek = 'all';
+  var totalMemberCount = 0;
 
-function getMemberProgress(member) {
-  var name = member.name;
-  var att_count = 0, att_total = 0;
-  var hw_count = 0, share_count = 0, qa_count = 0;
-  
-  // Attendance from attendance.json
-  allAttendance.forEach(function(w) {
-    var wk = w.week;
-    if (activeWeek !== 'all' && String(wk) !== activeWeek) return;
-    att_total++;
-    if (w[name] === 1) att_count++;
-  });
-  
-  // Submissions from SCF API
-  if (allSubmissions && allSubmissions.length) {
-    allSubmissions.forEach(function(rec) {
-      var fields = rec.fields || rec;
-      var fname = fields['姓名'] || fields.name || '';
-      var fweek = parseInt((fields['第几周'] || fields.week || '0').toString().replace(/[^0-9]/g,'')) || 0;
-      var ftype = fields['作业类型'] || fields.type || '';
-      
-      if (fname !== name) return;
-      if (activeWeek !== 'all' && fweek !== parseInt(activeWeek)) return;
-      
-      if (ftype === '本周作业' || ftype === '作业') hw_count++;
-      else if (ftype === '本周分享' || ftype === '分享') share_count++;
-      else if (ftype === '学员答疑' || ftype === '答疑') qa_count++;
+  // ----- DOM 引用 -----
+  var $statTotalMembers = document.getElementById('statTotalMembers');
+  var $statCurrentWeek  = document.getElementById('statCurrentWeek');
+  var $statStartDate    = document.getElementById('statStartDate');
+  var $groupChips       = document.getElementById('groupChips');
+  var $weekChips        = document.getElementById('weekChips');
+  var $memberList       = document.getElementById('memberList');
+  var $memberCount      = document.getElementById('memberCount');
+
+  // ============================================================
+  //  数据加载
+  // ============================================================
+  function fetchJSON(url) {
+    return fetch(url).then(function(resp) {
+      if (!resp.ok) throw new Error('HTTP ' + resp.status + ' for ' + url);
+      return resp.json();
     });
   }
-  
-  var totalWeeks = activeWeek === 'all' ? Math.max(1, allAttendance.length) : 1;
-  var attPct = att_total > 0 ? Math.round(att_count / att_total * 100) : 0;
-  var hwPct = totalWeeks > 0 ? Math.min(100, Math.round(hw_count / totalWeeks * 100)) : 0;
-  var sharePct = totalWeeks > 0 ? Math.min(100, Math.round(share_count / totalWeeks * 100)) : 0;
-  var qaPct = totalWeeks > 0 ? Math.min(100, Math.round(qa_count / totalWeeks * 100)) : 0;
-  
-  var score = attPct * 0.4 + hwPct * 0.3 + sharePct * 0.15 + qaPct * 0.15;
-  var status = score >= 60 ? '优秀' : score >= 20 ? '已起步' : '未开始';
-  var borderClass = score >= 60 ? 'border-success' : score >= 20 ? 'border-warning' : 'border-danger';
-  
-  return { attPct: attPct, hwPct: hwPct, sharePct: sharePct, qaPct: qaPct, score: score, status: status, borderClass: borderClass, att_count: att_count, att_total: att_total, hw_count: hw_count, share_count: share_count, qa_count: qa_count };
-}
 
-function renderMembers() {
-  var filtered = allMembers;
-  if (activeGroup !== 'all') filtered = allMembers.filter(function(m) { return m.group === activeGroup; });
-  
-  var html = '';
-  filtered.forEach(function(m) {
-    var p = getMemberProgress(m);
-    html += '<div class="member-card ' + p.borderClass + '" onclick="showMemberDetail('' + m.name.replace(/'/g, "\\'") + '')">';
-    html += '<div class="card-left">';
-    html += '<div class="card-name">' + m.name + '</div>';
-    html += '<div class="card-badges">';
-    html += m.is_leader ? '<span class="badge badge-leader">组长</span>' : '<span class="badge badge-member">组员</span>';
-    html += '<span class="badge badge-group">' + m.group + '</span>';
-    html += '</div></div>';
-    html += '<div class="card-right">';
-    html += '<span class="status-badge status-' + (p.status === '优秀' ? 'success' : p.status === '已起步' ? 'warning' : 'danger') + '">' + p.status + '</span>';
-    html += '</div></div>';
-    html += '<div class="card-progress">';
-    html += progressBar('本周作业', p.hwPct, p.hw_count, p.att_total > 0 ? p.att_total : 6);
-    html += progressBar('本周分享', p.sharePct, p.share_count, p.att_total > 0 ? p.att_total : 6);
-    html += progressBar('学员答疑', p.qaPct, p.qa_count, p.att_total > 0 ? p.att_total : 6);
-    html += progressBar('出勤', p.attPct, p.att_count, p.att_total);
-    html += '</div>';
+  function loadAllData() {
+    var promises = [
+      fetchJSON('groups.json'),
+      fetchJSON('attendance.json'),
+      fetchJSON(RELAY_URL + '/submissions').catch(function() {
+        console.warn('[index] 无法连接 SCF API，仅使用本地数据');
+        return { ok: true, records: [] };
+      })
+    ];
+
+    return Promise.all(promises).then(function(results) {
+      groupsData     = results[0];
+      attendanceData = results[1];
+      var submissionsResp = results[2];
+      submissionsData = (submissionsResp.records || []).map(function(r) {
+        var f = r.fields || {};
+        return {
+          record_id: r._record_id || r.record_id || '',
+          name:  f['姓名'] || '',
+          group: f['组别'] || '',
+          week:  f['第几周'] || 0,
+          type:  f['作业类型'] || '',
+          content: f['作业内容'] || ''
+        };
+      });
+      buildMemberList();
+      renderAll();
+    });
+  }
+
+  // ============================================================
+  //  构建全量成员列表
+  // ============================================================
+  function buildMemberList() {
+    allMembers = [];
+    var groupNames = Object.keys(groupsData).sort(function(a, b) {
+      return parseInt(a) - parseInt(b);
+    });
+
+    groupNames.forEach(function(gName) {
+      var g = groupsData[gName];
+      (g.members || []).forEach(function(name) {
+        allMembers.push({
+          name: name,
+          group: gName,
+          isLeader: (name === g.leader)
+        });
+      });
+    });
+
+    totalMemberCount = allMembers.length;
+  }
+
+  // ============================================================
+  //  计算单个成员的进度
+  // ============================================================
+  function calcMemberProgress(member) {
+    var hwCount = 0, shareCount = 0, qaCount = 0, attValue = 0;
+
+    // 从 submissions 统计作业提交
+    submissionsData.forEach(function(s) {
+      if (s.name !== member.name) return;
+
+      if (selectedWeek !== 'all' && String(s.week) !== String(selectedWeek)) return;
+
+      if (s.type === '本周作业') hwCount++;
+      else if (s.type === '本周分享') shareCount++;
+      else if (s.type === '学员答疑') qaCount++;
+    });
+
+    // 从 attendance 统计出勤
+    if (attendanceData && attendanceData.length > 0) {
+      var weekRecords;
+      if (selectedWeek === 'all') {
+        weekRecords = attendanceData;
+      } else {
+        weekRecords = attendanceData.filter(function(w) {
+          return String(w.week) === String(selectedWeek);
+        });
+      }
+      weekRecords.forEach(function(w) {
+        if (w[member.name] === 1) attValue++;
+      });
+    }
+
+    // 计算百分比
+    var weekCount = 1;
+    if (selectedWeek === 'all') {
+      weekCount = attendanceData ? attendanceData.length : 1;
+      if (weekCount < 1) weekCount = 1;
+    }
+
+    var hwPct    = Math.round((hwCount    / weekCount) * 100);
+    var sharePct = Math.round((shareCount / weekCount) * 100);
+    var qaPct    = Math.round((qaCount    / weekCount) * 100);
+    var attPct   = Math.round((attValue   / weekCount) * 100);
+
+    // 总分用于判断状态
+    var totalScore = hwPct + sharePct + qaPct + attPct;
+
+    var status;
+    if (totalScore >= 200)      status = 'excellent';
+    else if (totalScore >= 50)  status = 'started';
+    else                        status = 'none';
+
+    return {
+      hwPct:    hwPct,
+      sharePct: sharePct,
+      qaPct:    qaPct,
+      attPct:   attPct,
+      status:   status,
+      totalScore: totalScore
+    };
+  }
+
+  // ============================================================
+  //  渲染全部
+  // ============================================================
+  function renderAll() {
+    renderStats();
+    renderGroupChips();
+    renderWeekChips();
+    renderMemberCards();
+  }
+
+  // ----- 统计卡片 -----
+  function renderStats() {
+    $statTotalMembers.textContent = totalMemberCount;
+
+    // 找最新周
+    if (attendanceData && attendanceData.length > 0) {
+      var latest = attendanceData[attendanceData.length - 1];
+      $statCurrentWeek.textContent = latest.weekLabel || ('第' + latest.week + '周');
+      // 开营日期取第一条
+      var first = attendanceData[0];
+      if (first.date) {
+        var dateParts = first.date.split(/[/\-\s]/);
+        if (dateParts.length >= 2) {
+          $statStartDate.textContent = dateParts[0] + '/' + dateParts[1];
+        }
+      }
+    }
+  }
+
+  // ----- 小组 Chips -----
+  function renderGroupChips() {
+    var groupNames = Object.keys(groupsData).sort(function(a, b) {
+      return parseInt(a) - parseInt(b);
+    });
+
+    var html = '<button class="group-chip' + (selectedGroup === 'all' ? ' active' : '') + '" data-group="all">全部</button>';
+    groupNames.forEach(function(gName) {
+      html += '<button class="group-chip' + (selectedGroup === gName ? ' active' : '') + '" data-group="' + gName + '">' + gName + '</button>';
+    });
+    $groupChips.innerHTML = html;
+
+    // 绑定事件
+    $groupChips.querySelectorAll('.group-chip').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        selectedGroup = this.dataset.group;
+        renderGroupChips();
+        renderMemberCards();
+      });
+    });
+  }
+
+  // ----- 周次 Chips -----
+  function renderWeekChips() {
+    var html = '<button class="week-chip' + (selectedWeek === 'all' ? ' active' : '') + '" data-week="all">全部</button>';
+
+    if (attendanceData && attendanceData.length > 0) {
+      attendanceData.forEach(function(w) {
+        var label = w.weekLabel || ('第' + w.week + '周');
+        if (w.date) {
+          var dp = w.date.split(/[/\-\s]/);
+          if (dp.length >= 2) label += ' ' + dp[0] + '/' + dp[1];
+        }
+        var isActive = (selectedWeek === String(w.week));
+        html += '<button class="week-chip' + (isActive ? ' active' : '') + '" data-week="' + w.week + '">' + label + '</button>';
+      });
+    }
+
+    $weekChips.innerHTML = html;
+
+    // 绑定事件
+    $weekChips.querySelectorAll('.week-chip').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        selectedWeek = this.dataset.week;
+        renderWeekChips();
+        renderMemberCards();
+      });
+    });
+  }
+
+  // ----- 学员进度卡片 -----
+  function renderMemberCards() {
+    // 筛选成员
+    var filtered = allMembers;
+    if (selectedGroup !== 'all') {
+      filtered = allMembers.filter(function(m) {
+        return m.group === selectedGroup;
+      });
+    }
+
+    if (filtered.length === 0) {
+      $memberList.innerHTML = '<div class="empty-state">暂无学员数据</div>';
+      $memberCount.textContent = '显示 0 / ' + totalMemberCount + ' 名学员';
+      return;
+    }
+
+    var html = '';
+    filtered.forEach(function(member) {
+      var progress = calcMemberProgress(member);
+
+      var statusClass = 'status-' + progress.status;
+      var badgeClass = member.isLeader ? 'badge-leader' : 'badge-member';
+      var badgeText  = member.isLeader ? '组长' : '组员';
+
+      html += '<div class="member-card ' + statusClass + '">';
+      html += '  <div class="member-card-header">';
+      html += '    <span class="member-name">' + escHtml(member.name) + '</span>';
+      html += '    <span class="badge ' + badgeClass + '">' + badgeText + '</span>';
+      html += '    <span class="badge badge-group">' + member.group + '</span>';
+      html += '  </div>';
+
+      // 进度条
+      html += buildProgressRow('本周作业', progress.hwPct);
+      html += buildProgressRow('本周分享', progress.sharePct);
+      html += buildProgressRow('学员答疑', progress.qaPct);
+      html += buildProgressRow('出勤',     progress.attPct);
+
+      html += '</div>';
+    });
+
+    $memberList.innerHTML = html;
+    $memberCount.textContent = '显示 ' + filtered.length + ' / ' + totalMemberCount + ' 名学员';
+  }
+
+  function buildProgressRow(label, pct) {
+    var colorClass;
+    if (pct >= 80)      colorClass = 'green';
+    else if (pct >= 30) colorClass = 'amber';
+    else                colorClass = 'red';
+
+    return '<div class="progress-row">'
+      + '<span class="progress-label">' + label + '</span>'
+      + '<div class="progress-bar-wrap">'
+      +   '<div class="progress-bar-fill ' + colorClass + '" style="width:' + pct + '%"></div>'
+      + '</div>'
+      + '<span class="progress-value">' + pct + '%</span>'
+      + '</div>';
+  }
+
+  // ----- HTML 转义 -----
+  function escHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
+  // ============================================================
+  //  启动
+  // ============================================================
+  loadAllData().catch(function(err) {
+    console.error('[index] 数据加载失败:', err);
+    $memberList.innerHTML = '<div class="empty-state">数据加载失败，请检查网络连接后刷新页面。<br><small>' + escHtml(err.message) + '</small></div>';
   });
-  
-  if (!filtered.length) html = '<div class="loading">暂无学员数据</div>';
-  document.getElementById('memberList').innerHTML = html;
-  document.getElementById('listFooter').textContent = '显示 ' + filtered.length + ' / ' + allMembers.length + ' 名学员';
-}
 
-function progressBar(label, pct, count, total) {
-  var color = pct >= 80 ? 'success' : pct >= 40 ? 'warning' : 'danger';
-  return '<div class="progress-row"><span class="progress-label">' + label + '</span><div class="progress-track"><div class="progress-fill fill-' + color + '" style="width:' + pct + '%"></div></div><span class="progress-num">' + count + '/' + total + '</span></div>';
-}
-
-function showMemberDetail(name) {
-  var m = allMembers.find(function(x) { return x.name === name; });
-  if (!m) return;
-  var p = getMemberProgress(m);
-  alert(m.name + ' · ' + m.group + '\n' + (m.is_leader ? '组长 · ' : '组员 · ') + p.status + '\n\n出勤: ' + p.att_count + '/' + p.att_total + '\n作业: ' + p.hw_count + '/' + (p.att_total || 6) + '\n分享: ' + p.share_count + '/' + (p.att_total || 6) + '\n答疑: ' + p.qa_count + '/' + (p.att_total || 6));
-}
+})();
 </script>
+
 </body>
 </html>
