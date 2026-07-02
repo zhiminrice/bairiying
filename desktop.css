@@ -1,0 +1,126 @@
+/* ==========================================================
+   desktop.css — 桌面端响应式覆盖样式
+   百日营项目 · 蓝色经典桌面风格
+   当屏幕宽度 >= 768px 时生效
+   ========================================================== */
+
+/* .desktop-nav 基础样式 — 默认隐藏 */
+.desktop-nav {
+  display: none;
+}
+
+/* ====== 桌面端响应式 ====== */
+@media (min-width: 768px) {
+  :root {
+    /* === 蓝色主色调（桌面端） === */
+    --copper: #4A90D9;
+    --copper-light: #E8F0FE;
+    --copper-dark: #2B5F9B;
+    --copper-gradient: linear-gradient(135deg, #4A90D9, #5BA0E9);
+    
+    /* === 背景与卡片 === */
+    --bg: #F5F7FA;
+    --bg-gradient: linear-gradient(180deg, #F5F7FA 0%, #E8EDF2 100%);
+    --card-bg: #FFFFFF;
+    --card-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    
+    /* === 文字颜色 === */
+    --text: #1A2332;
+    --text-secondary: #5A6A7E;
+    --text-muted: #8A9AAA;
+    
+    /* === 边框 === */
+    --border: #D8DEE5;
+    
+    /* === 语义色 === */
+    --success: #4CAF50;
+    --success-light: #E8F5E9;
+    --warning: #FF9800;
+    --warning-light: #FFF3E0;
+    --danger: #F44336;
+    --danger-light: #FFEBEE;
+    
+    /* === 尺寸 === */
+    --max-width: 100%;  /* 桌面端全宽 */
+  }
+  
+  /* 桌面端隐藏底部导航 */
+  .bottom-nav {
+    display: none !important;
+  }
+  
+  /* 桌面端顶部导航栏 */
+  .desktop-nav {
+    display: flex !important;
+    background: var(--card-bg);
+    border-bottom: 2px solid var(--border);
+    padding: 0 var(--space-2xl);
+    height: 56px;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .desktop-nav .nav-brand {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--copper);
+    margin-right: var(--space-2xl);
+  }
+  
+  .desktop-nav .nav-links {
+    display: flex;
+    gap: var(--space-xs);
+  }
+  
+  .desktop-nav .nav-link {
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  
+  .desktop-nav .nav-link:hover {
+    background: var(--copper-light);
+    color: var(--copper);
+  }
+  
+  .desktop-nav .nav-link.active {
+    background: var(--copper);
+    color: #fff;
+  }
+  
+  /* 桌面端布局容器 */
+  .app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-2xl);
+  }
+  
+  /* 桌面端统计卡片 2x4 网格 */
+  .stat-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+    overflow: visible;
+    flex-wrap: nowrap;
+    padding: 0;
+  }
+  
+  /* 桌面端学员卡片 2 列网格 */
+  .member-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+  
+  /* 桌面端底部添加间距（导航被隐藏） */
+  body {
+    padding-bottom: 0;
+  }
+}
