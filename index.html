@@ -71,16 +71,14 @@ let allMembers = [], allGroups = {}, allAttendance = [], allSubmissions = [];
 let activeGroup = 'all', activeWeek = 'all';
 
 // Load all data
+// Phase 1: Load groups + attendance (same-origin, always fast)
 Promise.all([
   fetch('groups.json').then(r=>r.json()),
-  fetch('attendance.json').then(r=>r.json()),
-  fetch(RELAY_URL + '/submissions').then(r=>r.json()).catch(()=>null)
+  fetch('attendance.json').then(r=>r.json())
 ]).then(function(results) {
   allGroups = results[0];
   allAttendance = results[1];
-  if (results[2] && results[2].records) allSubmissions = results[2].records;
   
-  // Build member list from groups
   Object.keys(allGroups).forEach(function(g) {
     allGroups[g].members.forEach(function(name) {
       allMembers.push({ name: name, group: g, is_leader: name === allGroups[g].leader });
@@ -90,6 +88,17 @@ Promise.all([
   document.getElementById('statTotalMembers').textContent = allMembers.length;
   renderGroupChips();
   renderMembers();
+  
+  // Phase 2: Load submissions from SCF in background (may be slow)
+  var controller = new AbortController();
+  var timeout = setTimeout(function() { controller.abort(); }, 5000);
+  fetch(RELAY_URL + '/submissions', { signal: controller.signal })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      clearTimeout(timeout);
+      if (data && data.records) allSubmissions = data.records;
+    })
+    .catch(function() { /* silent fail - data will show without submissions */ });
 }).catch(function(err) {
   console.error('Data load failed:', err);
   document.getElementById('memberList').innerHTML = '<div class="loading">数据加载失败，请刷新重试</div>';
