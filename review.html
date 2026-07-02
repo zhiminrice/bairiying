@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>导师点评 - 百日营</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* --- Review Card Specific --- */
+    .review-card {
+      padding: 16px;
+    }
+
+    .review-card__header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .review-card__meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .review-card__name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-family: var(--font-serif);
+    }
+
+    .review-card__info-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .review-card__date {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .review-card__tags {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .review-card__body {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      font-family: var(--font-serif);
+      margin-bottom: 12px;
+      padding: 12px;
+      background: var(--copper-bg);
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--copper-light);
+    }
+
+    .review-card__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .review-card__footer-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* --- Summary Bar --- */
+    .summary-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-card);
+    }
+
+    .summary-bar__item {
+      text-align: center;
+    }
+
+    .summary-bar__num {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--copper-dark);
+      font-family: var(--font-serif);
+      line-height: 1.2;
+    }
+
+    .summary-bar__label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .summary-bar__divider {
+      width: 1px;
+      height: 28px;
+      background: var(--border-card);
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Page Header -->
+    <header class="page-header">
+      <div class="subtitle">百日营 &#183; 导师点评</div>
+      <h1 class="title">导师点评</h1>
+    </header>
+
+    <!-- Week Selector -->
+    <div class="week-selector" id="weekSelector">
+      <button class="week-chip" data-week="1">第1周 5/25</button>
+      <button class="week-chip" data-week="2">第2周 6/3</button>
+      <button class="week-chip" data-week="3">第3周 6/9</button>
+      <button class="week-chip" data-week="4">第4周 6/17</button>
+      <button class="week-chip" data-week="5">第5周 6/22</button>
+      <button class="week-chip week-chip--active" data-week="6">第6周 6/29</button>
+    </div>
+
+    <!-- Summary Bar -->
+    <div class="summary-bar" id="summaryBar">
+      <div class="summary-bar__item">
+        <div class="summary-bar__num" id="totalReviews">8</div>
+        <div class="summary-bar__label">本周点评</div>
+      </div>
+      <div class="summary-bar__divider"></div>
+      <div class="summary-bar__item">
+        <div class="summary-bar__num">4.6</div>
+        <div class="summary-bar__label">平均评分</div>
+      </div>
+      <div class="summary-bar__divider"></div>
+      <div class="summary-bar__item">
+        <div class="summary-bar__num" id="totalStudents">7</div>
+        <div class="summary-bar__label">覆盖学员</div>
+      </div>
+    </div>
+
+    <!-- Review Cards -->
+    <div id="reviewContainer">
+      <!-- Cards populated by JS -->
+    </div>
+
+    <!-- Footer -->
+    <div class="page-footer">
+      <span class="page-footer__text" id="footerText">共 8 条点评</span>
+    </div>
+  </div>
+
+  <!-- Bottom Tab Navigation -->
+  <nav class="tab-nav">
+    <a class="tab-nav__item" href="./">
+      <span class="tab-icon">&#128202;</span>
+      <span>总览</span>
+    </a>
+    <a class="tab-nav__item tab-nav__item--active" href="review.html">
+      <span class="tab-icon">&#128221;</span>
+      <span>点评</span>
+    </a>
+    <a class="tab-nav__item" href="submit.html">
+      <span class="tab-icon">&#9997;&#65039;</span>
+      <span>提交</span>
+    </a>
+    <a class="tab-nav__item" href="attendance.html">
+      <span class="tab-icon">&#128203;</span>
+      <span>出勤</span>
+    </a>
+    <a class="tab-nav__item" href="profile.html">
+      <span class="tab-icon">&#128100;</span>
+      <span>档案</span>
+    </a>
+  </nav>
+
+  <script>
+  // ============================================================
+  //  示例点评数据 — 后续可从 SCF API 动态加载
+  // ============================================================
+  const ALL_REVIEWS = [
+    // 第6周
+    { week: 6, name: '刘瑛茹', group: '1组', type: '本周作业', date: '6/30',
+      stars: 5,
+      body: '瑛茹本周的作业非常有深度，从"看见孩子的情绪"这个角度切入，不仅描述了两个具体场景，还做了自我反思——意识到了自己从"控制"到"陪伴"的转变。这种觉察本身就是成长的最好证明。继续加油，你已经走在了正确的路上。' },
+    { week: 6, name: '杨艳辉', group: '2组', type: '本周作业', date: '6/30',
+      stars: 5,
+      body: '艳辉在作业中展现了非常细致的观察力。你记录了孩子写作业时的一个完整情绪波动过程，并且尝试了"先接纳、再引导"的策略。特别欣赏你在最后提出的那个问题——"我是否也在用同样的方式对待自己？"这个问题值得深入探索。' },
+    { week: 6, name: '钟智敏', group: '3组', type: '本周作业', date: '6/29',
+      stars: 4,
+      body: '智敏本次作业聚焦于"夫妻关系中的沟通模式"，这是一个非常重要的议题。你坦诚地分享了与伴侣之间的一次冲突以及复盘过程，非常有勇气。建议下一步可以尝试在冲突发生前就启动觉察，而不仅仅是事后反思。' },
+    { week: 6, name: '毛梓晰', group: '4组', type: '本周分享', date: '6/29',
+      stars: 5,
+      body: '梓晰的分享让我非常感动。你将自己与母亲关系的转变娓娓道来，从过去的疏离到现在的理解与靠近，这是一个非常艰难但美好的过程。你的分享也给其他学员很大的启发——改变自己，关系就会改变。' },
+    { week: 6, name: '蔡学敏', group: '5组', type: '本周作业', date: '6/29',
+      stars: 4,
+      body: '学敏的作业条理清晰，将本周的三次践行分别做了详细记录。在"倾听孩子"这个练习上你做得非常好，特别是第二次尝试中，你克制住了打断孩子的冲动，完整地听完了他的表达。这种克制本身就是爱的表达。' },
+    { week: 6, name: '霍立韵', group: '6组', type: '本周作业', date: '6/30',
+      stars: 5,
+      body: '立韵本周的作业让我看到了一个母亲的柔软与力量。你在处理兄弟争执时没有站队、没有评判，而是分别倾听了两个孩子的感受。这种"不评判的在场"正是百日营最核心的修炼方向之一。做得非常好！' },
+    { week: 6, name: '蔡小红', group: '7组', type: '学员答疑', date: '6/29',
+      stars: 4,
+      body: '小红提出的关于"孩子不愿意沟通怎么办"的问题非常有代表性。我的建议是：不要急于让孩子开口，先创造安全的氛围。你可以从分享自己的感受开始，比如"妈妈今天有点累，但看到你就觉得开心了"，让沟通自然地发生，而不是被要求。' },
+    { week: 6, name: '张冬梅', group: '1组', type: '本周作业', date: '6/30',
+      stars: 5,
+      body: '冬梅的作业让人印象深刻。你将自己一直以来的"完美主义"模式拆解得非常透彻，并看到这个模式如何影响了你与孩子的互动。认知本身就是改变的开始。期待看到你在接下来的践行中，一点点放下"必须完美"的执念。' },
+  ];
+
+  // ============================================================
+  //  渲染函数
+  // ============================================================
+
+  function getTypeTagClass(type) {
+    const map = {
+      '本周作业': 'tag-homework',
+      '本周分享': 'tag-share',
+      '学员答疑': 'tag-qa',
+      '每日践行': 'tag-practice',
+      '每日觉察': 'tag-awareness'
+    };
+    return map[type] || 'tag-homework';
+  }
+
+  function getInitial(name) {
+    return name.charAt(0);
+  }
+
+  function renderStars(count) {
+    var full  = '&#9733;'.repeat(count);
+    var empty = '&#9734;'.repeat(5 - count);
+    return '<span class="stars">' + full + empty + '</span>';
+  }
+
+  function renderReviewCard(review) {
+    return (
+      '<div class="card review-card">' +
+        '<div class="review-card__header">' +
+          '<div class="avatar">' + getInitial(review.name) + '</div>' +
+          '<div class="review-card__meta">' +
+            '<div class="review-card__name">' + review.name + '</div>' +
+            '<div class="review-card__info-row">' +
+              '<span class="badge badge-group">' + review.group + '</span>' +
+              '<span class="review-card__date">' + review.date + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="review-card__tags">' +
+          '<span class="tag ' + getTypeTagClass(review.type) + '">' + review.type + '</span>' +
+        '</div>' +
+        '<div class="review-card__body">' + review.body + '</div>' +
+        '<div class="review-card__footer">' +
+          '<div class="review-card__footer-left">' +
+            renderStars(review.stars) +
+          '</div>' +
+          '<a class="detail-link" href="javascript:void(0)">查看详情 &gt;</a>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function renderReviews(reviews) {
+    var container = document.getElementById('reviewContainer');
+    var html = '';
+    for (var i = 0; i < reviews.length; i++) {
+      html += renderReviewCard(reviews[i]);
+    }
+    container.innerHTML = html;
+
+    document.getElementById('footerText').textContent = '共 ' + reviews.length + ' 条点评';
+    document.getElementById('totalReviews').textContent = reviews.length;
+    document.getElementById('totalStudents').textContent = countUniqueStudents(reviews);
+  }
+
+  function countUniqueStudents(reviews) {
+    var seen = {};
+    var count = 0;
+    for (var i = 0; i < reviews.length; i++) {
+      if (!seen[reviews[i].name]) {
+        seen[reviews[i].name] = true;
+        count++;
+      }
+    }
+    return count;
+  }
+
+  function filterByWeek(week) {
+    return ALL_REVIEWS.filter(function(r) { return r.week === week; });
+  }
+
+  // ============================================================
+  //  周选择器交互
+  // ============================================================
+
+  var weekSelector = document.getElementById('weekSelector');
+  var chips = weekSelector.querySelectorAll('.week-chip');
+
+  chips.forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      chips.forEach(function(c) { c.classList.remove('week-chip--active'); });
+      chip.classList.add('week-chip--active');
+      var week = parseInt(chip.getAttribute('data-week'), 10);
+      renderReviews(filterByWeek(week));
+    });
+  });
+
+  // ============================================================
+  //  初始加载
+  // ============================================================
+  renderReviews(filterByWeek(6));
+  </script>
+</body>
+</html>
