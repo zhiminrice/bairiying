@@ -1,0 +1,62 @@
+/* ==========================================================
+   colors_and_type.css — 移动端温暖学院风品牌设计变量
+   百日营项目 · 品牌 CSS 自定义属性
+   适用于移动端（< 768px），桌面端由 desktop.css 覆盖
+   ========================================================== */
+
+:root {
+  /* === 铜色主色调（移动端） === */
+  --copper: #B87333;
+  --copper-light: #F5E6D3;
+  --copper-dark: #8B5A2B;
+  --copper-gradient: linear-gradient(135deg, #B87333, #D4943A);
+  
+  /* === 背景与卡片 === */
+  --bg: #FBF8F4;
+  --bg-gradient: radial-gradient(ellipse at 50% 0%, #FBF8F4 0%, #F0E8DA 100%);
+  --card-bg: #FFFFFF;
+  --card-shadow: 0 2px 12px rgba(139, 90, 43, 0.08);
+  
+  /* === 文字颜色 === */
+  --text: #3D2E1E;
+  --text-secondary: #7A6B5D;
+  --text-muted: #A89888;
+  
+  /* === 边框 === */
+  --border: #E8DFD4;
+  
+  /* === 语义色 === */
+  --success: #5A9E6F;
+  --success-light: #EDF5F0;
+  --warning: #D4943A;
+  --warning-light: #FDF3E3;
+  --danger: #C25B5B;
+  --danger-light: #FCEEEE;
+  
+  /* === 字体 === */
+  --font-serif: 'Noto Serif SC', 'Songti SC', serif;
+  --font-sans: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+  
+  /* === 圆角 === */
+  --radius-sm: 4px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+  
+  /* === 间距 === */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-2xl: 24px;
+  
+  /* === 阴影 === */
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.06);
+  --shadow-md: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  
+  /* === 尺寸 === */
+  --nav-height: 70px;
+  --max-width: 480px;
+}
