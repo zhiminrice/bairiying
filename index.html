@@ -1818,7 +1818,7 @@ function resetLocalMap() { _localMap = null; }
 
 let activeGroup = 'all', activeFilter = 'all', searchQuery = '', activeWeek = 'all';
 
-function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();}); bindEvents(); loadAttendanceData(); setTimeout(renderAttendanceTable, 100); syncGroupsFromJSON(); }
+function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();}); bindEvents(); loadAttendanceData(); preloadScfData(); setTimeout(renderAttendanceTable, 100); syncGroupsFromJSON(); }
 
 function renderGroupTabs() {
   const c = document.getElementById('groupTabs');
@@ -2175,6 +2175,19 @@ document.addEventListener('DOMContentLoaded', function() {
 init();
 // ====== EXPORT LOGIC ======
 let _exportWeek = 'all', _exportType = 'all', _exportGroup = 'all';
+let _scfCache = null;
+
+// Preload SCF data once asynchronously (no blocking)
+function preloadScfData() {
+  if (_scfCache) return;
+  fetch(RELAY_URL + '/submissions')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      _scfCache = data.records || [];
+      console.log('[SCF] Preloaded ' + _scfCache.length + ' records for export');
+    })
+    .catch(function() { _scfCache = []; });
+}
 
 function bindExportChips() {
   var ew = document.getElementById('exportWeeks');
@@ -2251,19 +2264,20 @@ function getExportData() {
     }
   });
 
-  // Merge SCF cloud submissions into export
-  try {
-    var scfReq = new XMLHttpRequest();
-    scfReq.open('GET', RELAY_URL + '/submissions', false);
-    scfReq.send();
-    if (scfReq.status === 200) {
-      (JSON.parse(scfReq.responseText).records || []).forEach(function(r) {
-        var rn = r['姓名'] || ''; var rw = (r['第几周'] || '').replace(/[^0-9]/g, '');
-        var rt = r['作业类型'] || ''; var rc = r['作业内容'] || '';
-        if (rn && rw) results.push({ name: rn, group: r['组别'] || '', week: parseInt(rw), type: rt, content: rc, source: 'scf' });
-      });
+  // Merge SCF cloud submissions into export (async preloaded, properly filtered)
+  (_scfCache || []).forEach(function(r) {
+    var rn = r['姓名'] || ''; var rw = (r['第几周'] || '').replace(/[^0-9]/g, '');
+    var rt = r['作业类型'] || ''; var rc = r['作业内容'] || '';
+    if (!rn || !rw) return;
+    var wNum = parseInt(rw);
+    if (_exportWeek !== 'all' && String(wNum) !== _exportWeek) return;
+    if (_exportType !== 'all' && rt !== _exportType) return;
+    if (_exportGroup !== 'all') {
+      var rg = r['组别'] || '';
+      if (rg !== '' && rg !== _exportGroup) return;
     }
-  } catch(e) { /* silent */ }
+    results.push({ name: rn, group: r['组别'] || '', week: wNum, type: rt, content: rc, source: 'scf' });
+  });
   return results;
 }
 
