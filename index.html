@@ -992,8 +992,8 @@ textarea {
   </div>
 
   <div class="btn-row">
-    <button class="btn btn-primary" onclick="refreshExportAndDownload()">📥 导出 CSV</button>
-    <button class="btn btn-secondary" onclick="copyExport()">📋 复制文本</button>
+    <button class="btn btn-primary" onclick="window.open("export.html","_blank")">📥 导出 CSV</button>
+    <button class="btn btn-secondary" onclick="window.open("export.html","_blank")">📋 复制文本</button>
   </div>
 
   <div id="exportPreview" style="margin-top:12px;"></div>
@@ -1816,7 +1816,7 @@ function resetLocalMap() { _localMap = null; }
 
 let activeGroup = 'all', activeFilter = 'all', searchQuery = '', activeWeek = 'all';
 
-function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();}); bindEvents(); loadAttendanceData(); setTimeout(renderAttendanceTable, 100); syncGroupsFromJSON(); preloadScfData(); }
+function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();}); bindEvents(); loadAttendanceData(); setTimeout(renderAttendanceTable, 100); syncGroupsFromJSON(); }
 
 function renderGroupTabs() {
   const c = document.getElementById('groupTabs');
@@ -2174,12 +2174,6 @@ init();
 // ====== EXPORT LOGIC ======
 let _exportWeek = 'all', _exportType = 'all', _exportGroup = 'all';
 
-let _scfCache=null;
-function preloadScfData(){
- if(_scfCache)return;
- fetch(RELAY_URL+'/submissions').then(function(r){return r.json();}).then(function(d){_scfCache=d.records||[];}).catch(function(){_scfCache=[];});
-}
-
 function bindExportChips() {
   var ew = document.getElementById('exportWeeks');
   if (!ew._bound) { ew._bound = true;
@@ -2222,80 +2216,39 @@ function bindExportChips() {
 
 function getExportData() {
   var results = [];
-  
-  // Type name mapping (old localStorage names <-> new display names)
-  var typeAliases = {
-    '本周作业': ['本周作业','作业','homework'],
-    '每日践行': ['每日践行','践行','practice'],
-    '本周分享': ['本周分享','分享','sharing'],
-    '每日觉察': ['每日觉察','觉察','awareness'],
-    '学员答疑': ['学员答疑','答疑','qna']
-  };
-  
-  var _en=function(s){return (s||'').replace(/<br\s*\/?>/gi,'\n').replace(/\s+/g,' ').trim();};
-  var seen={};
-  
-  // Phase 1: Walk all members in DATA, collect from assignments + localStorage
-  DATA.forEach(function(m){
-    if(!m||!m.name)return;
-    if(_exportGroup!=='all'&&m.group!==_exportGroup)return;
-    
-    var a=m.assignments||{};
-    var localMap=window._relaySubmissionsCache||{};
-    
-    for(var w=1;w<=14;w++){
-      if(_exportWeek!=='all'&&String(w)!==_exportWeek)continue;
-      var wk='w'+w;
-      
-      for(var dt in typeAliases){
-        if(_exportType!=='all'&&dt!==_exportType)continue;
-        var aliases=typeAliases[dt];
-        
-        // From DATA assignments
-        var dk='';
-        if(dt==='本周作业')dk=wk+'_homework';
-        else if(dt==='本周分享')dk=wk+'_sharing';
-        else if(dt==='学员答疑')dk=wk+'_qna';
-        else if(dt==='每日践行')dk=wk+'_practice';
-        else if(dt==='每日觉察')dk=wk+'_awareness';
-        (a[dk]||[]).forEach(function(c){
-          var sig=_en(c); if(sig&&!seen[sig]){seen[sig]=true;results.push({name:m.name,group:m.group,week:w,type:dt,content:c,source:'data'});}
+  var localMap = getLocalMap();
+  var names = []; DATA.forEach(function(m) { if (names.indexOf(m.name) < 0) names.push(m.name); });
+
+  names.forEach(function(name) {
+    var m = DATA.find(function(d) { return d.name === name; });
+    if (!m) return;
+    if (_exportGroup !== 'all' && m.group !== _exportGroup) return;
+
+    for (var w = 1; w <= 14; w++) {
+      if (_exportWeek !== 'all' && String(w) !== _exportWeek) continue;
+
+      var wk = 'w' + w;
+      var a = m.assignments || {};
+      var types = { '本周作业': a[wk + '_homework'] || [], '本周分享': a[wk + '_sharing'] || [], '学员答疑': a[wk + '_qna'] || [] };
+      var localTypes = { '本周作业': (localMap[name + '::' + w + '::本周作业'] || []), '本周分享': (localMap[name + '::' + w + '::本周分享'] || []), '学员答疑': (localMap[name + '::' + w + '::学员答疑'] || []) };
+
+      var _en = function(s) { return (s||'').replace(/<br\s*\/?>/gi,'\n').replace(/\s+/g,' ').trim(); };
+      for (var t in types) {
+        if (_exportType !== 'all' && t !== _exportType) continue;
+        var _seenExport = {};
+        types[t].forEach(function(c) {
+          results.push({ name: name, group: m.group, week: w, type: t, content: c, source: 'embedded' });
+          _seenExport[_en(c)] = true;
         });
-        
-        // From relay/localStorage (try all name variants)
-        for(var ai=0;ai<aliases.length;ai++){
-          var lk=m.name+'::'+w+'::'+aliases[ai];
-          (localMap[lk]||[]).forEach(function(s){
-            var sig=_en(s.content); if(sig&&!seen[sig]){seen[sig]=true;results.push({name:m.name,group:m.group,week:w,type:dt,content:s.content,source:'submitted'});}
-          });
-        }
+        localTypes[t].forEach(function(s) {
+          if (!_seenExport[_en(s.content)]) {
+            results.push({ name: name, group: m.group, week: w, type: t, content: s.content, source: 'local' });
+          }
+        });
       }
     }
   });
-  
-  // Phase 2: SCF cloud data (preloaded)
-  (_scfCache||[]).forEach(function(r){
-    var rn=r['姓名']||'';var rw=(r['第几周']||'').replace(/[^0-9]/g,'');
-    var rt=r['作业类型']||'';var rc=r['作业内容']||'';
-    if(!rn||!rw)return; var wNum=parseInt(rw);
-    if(_exportWeek!=='all'&&String(wNum)!==_exportWeek)return;
-    if(_exportType!=='all'&&rt!==_exportType)return;
-    if(_exportGroup!=='all'){var rg=r['组别']||'';if(rg!==''&&rg!==_exportGroup)return;}
-    var sig=_en(rc);if(sig&&!seen[sig]){seen[sig]=true;results.push({name:rn,group:r['组别']||'',week:wNum,type:rt,content:rc,source:'scf'});}
-  });
-  
   return results;
-}
-
-function refreshExportAndDownload(){
-  // Force reload SCF then export
-  fetch(RELAY_URL+'/submissions').then(function(r){return r.json();}).then(function(data){
-    _scfCache=data.records||[];
-    doExport();
-  }).catch(function(){
-    toast('云端数据加载失败，将仅导出本地数据');
-    doExport();
-  });
 }
 
 function updateExportPreview() {
