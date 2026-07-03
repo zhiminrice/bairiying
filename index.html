@@ -1788,7 +1788,7 @@ function resetLocalMap() { _localMap = null; }
 
 let activeGroup = 'all', activeFilter = 'all', searchQuery = '', activeWeek = 'all';
 
-function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();}); bindEvents(); setTimeout(renderAttendanceTable, 100); }
+function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();}); bindEvents(); loadAttendanceData(); preloadScfData(); setTimeout(renderAttendanceTable, 100); syncGroupsFromJSON(); }
 
 function renderGroupTabs() {
   const c = document.getElementById('groupTabs');
@@ -2140,6 +2140,18 @@ document.addEventListener('DOMContentLoaded', function() {
 init();
 // ====== EXPORT LOGIC ======
 let _exportWeek = 'all', _exportType = 'all', _exportGroup = 'all';
+let _scfCache = null;
+
+// Preload SCF data once on page load (async, no blocking)
+function preloadScfData() {
+  if (_scfCache) return;
+  fetch(RELAY_URL + '/submissions')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      _scfCache = data.records || [];
+    })
+    .catch(function() { _scfCache = []; });
+}
 
 function bindExportChips() {
   var ew = document.getElementById('exportWeeks');
