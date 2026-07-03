@@ -2198,6 +2198,15 @@ function getExportData() {
   var localMap = getLocalMap();
   var names = []; DATA.forEach(function(m) { if (names.indexOf(m.name) < 0) names.push(m.name); });
 
+  // Map new type names -> old localStorage/BITABLE key names for backward compat
+  var typeNameMap = {
+    '本周作业': ['本周作业','作业'],
+    '每日践行': ['每日践行','践行'],
+    '本周分享': ['本周分享','分享'],
+    '每日觉察': ['每日觉察','觉察'],
+    '学员答疑': ['学员答疑','答疑']
+  };
+
   names.forEach(function(name) {
     var m = DATA.find(function(d) { return d.name === name; });
     if (!m) return;
@@ -2208,22 +2217,36 @@ function getExportData() {
 
       var wk = 'w' + w;
       var a = m.assignments || {};
-      var types = { '本周作业': a[wk + '_homework'] || [], '每日践行': a[wk + '_practice'] || [], '本周分享': a[wk + '_sharing'] || [], '每日觉察': a[wk + '_awareness'] || [], '学员答疑': a[wk + '_qna'] || [] };
-      var localTypes = { '本周作业': (localMap[name + '::' + w + '::本周作业'] || []), '每日践行': (localMap[name + '::' + w + '::每日践行'] || []), '本周分享': (localMap[name + '::' + w + '::本周分享'] || []), '每日觉察': (localMap[name + '::' + w + '::每日觉察'] || []), '学员答疑': (localMap[name + '::' + w + '::学员答疑'] || []) };
+      var _en = function(s) { return (s||'').replace(/<br\\s*\/?>/gi,'\\n').replace(/\\s+/g,' ').trim(); };
 
-      var _en = function(s) { return (s||'').replace(/<br\s*\/?>/gi,'\n').replace(/\s+/g,' ').trim(); };
-      for (var t in types) {
-        if (_exportType !== 'all' && t !== _exportType) continue;
+      for (var displayType in typeNameMap) {
+        if (_exportType !== 'all' && displayType !== _exportType) continue;
+
+        var oldNames = typeNameMap[displayType];
         var _seenExport = {};
-        types[t].forEach(function(c) {
-          results.push({ name: name, group: m.group, week: w, type: t, content: c, source: 'embedded' });
+
+        // Merge from DATA assignments (uses old field names like _homework, _sharing, etc.)
+        var dataKey = '';
+        if (displayType === '本周作业') dataKey = wk + '_homework';
+        else if (displayType === '本周分享') dataKey = wk + '_sharing';
+        else if (displayType === '学员答疑') dataKey = wk + '_qna';
+        else if (displayType === '每日践行') dataKey = wk + '_practice';
+        else if (displayType === '每日觉察') dataKey = wk + '_awareness';
+        (a[dataKey] || []).forEach(function(c) {
+          results.push({ name: name, group: m.group, week: w, type: displayType, content: c, source: 'embedded' });
           _seenExport[_en(c)] = true;
         });
-        localTypes[t].forEach(function(s) {
-          if (!_seenExport[_en(s.content)]) {
-            results.push({ name: name, group: m.group, week: w, type: t, content: s.content, source: 'local' });
-          }
-        });
+
+        // Merge from localMap (try both old and new key names)
+        for (var ki = 0; ki < oldNames.length; ki++) {
+          var k = name + '::' + w + '::' + oldNames[ki];
+          (localMap[k] || []).forEach(function(s) {
+            if (!_seenExport[_en(s.content)]) {
+              results.push({ name: name, group: m.group, week: w, type: displayType, content: s.content, source: 'local' });
+              _seenExport[_en(s.content)] = true;
+            }
+          });
+        }
       }
     }
   });
