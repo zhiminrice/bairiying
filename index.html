@@ -972,6 +972,8 @@ textarea {
       <button class="chip" data-etype="本周作业">📝 本周作业</button>
       <button class="chip" data-etype="本周分享">💬 本周分享</button>
       <button class="chip" data-etype="学员答疑">❓ 学员答疑</button>
+      <button class="chip" data-etype="每日践行">💫 每日践行</button>
+      <button class="chip" data-etype="每日觉察">🔍 每日觉察</button>
     </div>
     <input type="hidden" id="exportType" value="all">
   </div>
@@ -2229,8 +2231,8 @@ function getExportData() {
 
       var wk = 'w' + w;
       var a = m.assignments || {};
-      var types = { '本周作业': a[wk + '_homework'] || [], '本周分享': a[wk + '_sharing'] || [], '学员答疑': a[wk + '_qna'] || [] };
-      var localTypes = { '本周作业': (localMap[name + '::' + w + '::本周作业'] || []), '本周分享': (localMap[name + '::' + w + '::本周分享'] || []), '学员答疑': (localMap[name + '::' + w + '::学员答疑'] || []) };
+      var types = { '本周作业': a[wk + '_homework'] || [], '本周分享': a[wk + '_sharing'] || [], '学员答疑': a[wk + '_qna'] || [], '每日践行': a[wk + '_practice'] || [], '每日觉察': a[wk + '_awareness'] || [] };
+      var localTypes = { '本周作业': (localMap[name + '::' + w + '::本周作业'] || []), '本周分享': (localMap[name + '::' + w + '::本周分享'] || []), '学员答疑': (localMap[name + '::' + w + '::学员答疑'] || []), '每日践行': (localMap[name + '::' + w + '::每日践行'] || []), '每日觉察': (localMap[name + '::' + w + '::每日觉察'] || []) };
 
       var _en = function(s) { return (s||'').replace(/<br\s*\/?>/gi,'\n').replace(/\s+/g,' ').trim(); };
       for (var t in types) {
