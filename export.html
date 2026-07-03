@@ -5,223 +5,187 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>百日营 · 数据导出</title>
 <style>
-body{font-family:'Noto Sans SC',system-ui,sans-serif;background:#FBF8F4;margin:0;padding:0}
-.export-page{max-width:520px;margin:0 auto;padding:20px 16px 100px}
-h2{font-family:'Noto Serif SC',serif;color:#8B5A2B;text-align:center;margin-bottom:20px}
-.card{background:#fff;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(139,90,43,0.08)}
-.card h3{color:#8B5A2B;margin:0 0 10px 0;font-size:15px}
-.flex-row{display:flex;gap:8px;flex-wrap:wrap}
-.chip{padding:6px 14px;border-radius:20px;border:1.5px solid #E8DFD4;background:#fff;font-size:13px;cursor:pointer;color:#7A6B5D}
-.chip.active{background:#B87333;color:#fff;border-color:#B87333}
-.stats{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
-.stat{flex:1;min-width:70px;text-align:center;padding:10px;background:#FBF8F4;border-radius:10px}
-.stat .num{font-size:22px;font-weight:700;color:#B87333}
-.stat .lbl{font-size:10px;color:#7A6B5D;margin-top:3px}
-.btn{padding:12px 20px;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer}
-.btn-primary{background:linear-gradient(135deg,#B87333,#D4943A);color:#fff;width:100%;font-size:15px;padding:14px}
-.btn-sm{background:#fff;border:1.5px solid #B87333;color:#B87333;flex:1;font-size:13px;padding:8px}
-#log{margin-top:10px;font-size:12px;color:#3D2E1E;white-space:pre-wrap;max-height:260px;overflow-y:auto;background:#FBF8F4;border-radius:8px;padding:10px;line-height:1.6}
-#status{font-size:13px;color:#7A6B5D;text-align:center;margin-top:10px}
-a{color:#B87333;text-decoration:none}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#FBF8F4;padding:16px 16px 100px;max-width:520px;margin:0 auto}
+h2{text-align:center;color:#8B5A2B;margin-bottom:14px;font-size:18px}
+.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 1px 8px rgba(0,0,0,0.06)}
+.card h3{font-size:14px;color:#8B5A2B;margin-bottom:8px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:5px 12px;border-radius:20px;border:1.5px solid #E0D6C8;background:#fff;font-size:12px;cursor:pointer;color:#6B5D4F}
+.chip.on{background:#B87333;color:#fff;border-color:#B87333}
+.stats{display:flex;gap:6px;margin:8px 0}
+.stats div{flex:1;text-align:center;padding:8px 4px;background:#FBF8F4;border-radius:8px}
+.stats .n{font-size:20px;font-weight:700;color:#B87333}
+.stats .l{font-size:10px;color:#999;margin-top:2px}
+.btn{width:100%;padding:13px;border-radius:10px;border:none;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:6px}
+.btn-go{background:linear-gradient(135deg,#B87333,#D4943A);color:#fff}
+.btn-gray{background:#eee;color:#555}
+.btn-line{background:#fff;border:1.5px solid #B87333;color:#B87333}
+#log{font-size:11px;line-height:1.6;color:#555;white-space:pre-wrap;max-height:200px;overflow-y:auto;background:#FBF8F4;border-radius:8px;padding:8px;margin-top:8px;font-family:monospace}
 </style>
 </head>
 <body>
-<div class="export-page">
-<h2>📊 数据导出中心</h2>
+
+<h2>📊 导出中心</h2>
 
 <div class="card">
-  <h3>🔍 筛选</h3>
-  <div style="font-size:12px;color:#A89888;margin-bottom:6px">周次</div>
-  <div class="flex-row" id="weeks"></div>
-  <div style="font-size:12px;color:#A89888;margin-bottom:6px;margin-top:10px">组别</div>
-  <div class="flex-row" id="groups"></div>
+  <h3>🔍 周次</h3>
+  <div class="chips" id="wChips"></div>
 </div>
 
 <div class="card">
-  <h3>📈 数据概览</h3>
+  <h3>📊 数据</h3>
   <div class="stats">
-    <div class="stat"><div class="num" id="nCloud">--</div><div class="lbl">云端(SCF)</div></div>
-    <div class="stat"><div class="num" id="nLocal">--</div><div class="lbl">本地存储</div></div>
-    <div class="stat"><div class="num" id="nMerged">--</div><div class="lbl">合并去重</div></div>
-    <div class="stat"><div class="num" id="nFiltered">--</div><div class="lbl">当前筛选</div></div>
+    <div><div class="n" id="nC">--</div><div class="l">云端</div></div>
+    <div><div class="n" id="nL">--</div><div class="l">本地</div></div>
+    <div><div class="n" id="nM">--</div><div class="l">合并</div></div>
+    <div><div class="n" id="nF">--</div><div class="l">筛选</div></div>
   </div>
-  <div id="status">正在加载数据...</div>
-  <div id="log"></div>
+  <div id="log">加载中...</div>
 </div>
 
 <div class="card">
-  <h3>💾 导出</h3>
-  <button class="btn btn-primary" onclick="doExport()">📥 导出 CSV（含当前筛选）</button>
-  <div class="flex-row" style="margin-top:8px">
-    <button class="btn btn-sm" onclick="refreshAll()">🔄 刷新全部数据</button>
-    <button class="btn btn-sm" onclick="exportAll()">📋 导出全部(不过滤)</button>
-  </div>
+  <button class="btn btn-go" onclick="doExport()">📥 导出 CSV</button>
+  <button class="btn btn-line" onclick="refresh()">🔄 刷新数据</button>
+  <button class="btn btn-line" onclick="exportAll()">📋 导出全部(无视筛选)</button>
 </div>
 
-<div style="text-align:center"><a href="./">← 返回仪表盘</a></div>
-</div>
+<div style="text-align:center"><a href="./" style="color:#B87333;font-size:13px;text-decoration:none">← 返回</a></div>
 
 <script>
-var RELAY='https://1430780242-0nq7px6f3u.ap-shanghai.tencentscf.com';
-var KEY='submittedLocal';
-var cloud=[], local=[], merged=[];
-var week='all', grp='all';
+var SC='https://1430780242-0nq7px6f3u.ap-shanghai.tencentscf.com/submissions';
+var LK='submittedLocal';
+var cloud=[],local=[],merged=[];
+var week='all';
 
-function L(s){
-  var el=document.getElementById('log');
-  var t=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  el.textContent+='['+t+'] '+s+'\n';
-  el.scrollTop=el.scrollHeight;
-}
-function S(t){document.getElementById('status').textContent=t;}
+function log(s){var e=document.getElementById('log');e.textContent+=s+'\n';e.scrollTop=e.scrollHeight}
 
-// Build chips
+// Build week chips
 (function(){
-  var wh='<button class="chip active" onclick="pickWeek(\"all\",this)">全部</button>';
-  for(var w=1;w<=14;w++) wh+='<button class="chip" onclick="pickWeek(\"'+w+'\",this)">第'+w+'周</button>';
-  document.getElementById('weeks').innerHTML=wh;
+  var h='<span class="chip on" onclick="selW(\"all\",this)">全部</span>';
+  for(var i=1;i<=14;i++) h+='<span class="chip" onclick="selW(\"'+i+'\",this)">第'+i+'周</span>';
+  document.getElementById('wChips').innerHTML=h;
 })();
 
-fetch('groups.json').then(function(r){return r.json();}).then(function(g){
-  var gh='<button class="chip active" onclick="pickGroup(\"all\",this)">全部</button>';
-  Object.keys(g).sort().forEach(function(k){
-    gh+='<button class="chip" onclick="pickGroup(\"'+k+'\",this)">'+k+'('+g[k].members.length+')</button>';
-  });
-  document.getElementById('groups').innerHTML=gh;
-}).catch(function(e){L('⚠ 加载分组失败: '+e);});
-
-function pickWeek(v,el){
-  document.querySelectorAll('#weeks .chip').forEach(function(c){c.classList.remove('active')});
-  el.classList.add('active'); week=v; showStats();
-}
-function pickGroup(v,el){
-  document.querySelectorAll('#groups .chip').forEach(function(c){c.classList.remove('active')});
-  el.classList.add('active'); grp=v; showStats();
+function selW(v,el){
+  document.querySelectorAll('#wChips .chip').forEach(function(c){c.classList.remove('on')});
+  el.classList.add('on');week=v;upd();
 }
 
-function loadCloud(){
-  L('正在连接云端 SCF ...');
-  return fetch(RELAY+'/submissions')
-    .then(function(r){
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      return r.json();
-    })
-    .then(function(d){
-      cloud=d.records||[];
-      L('✅ 云端: '+cloud.length+' 条');
-      return cloud;
-    })
-    .catch(function(e){
-      L('❌ 云端失败: '+e.message);
-      cloud=[];
-      return [];
-    });
-}
-
-function loadLocal(){
-  L('正在读取本地存储...');
-  return fetch('groups.json').then(function(r){return r.json();}).then(function(gmap){
-    var gByName={};
-    Object.keys(gmap).forEach(function(k){
-      gmap[k].members.forEach(function(m){gByName[m]=k;});
-    });
-    local=[];
-    try{
-      var raw=localStorage.getItem(KEY);
-      var arr=raw?JSON.parse(raw):[];
-      arr.forEach(function(s){
-        local.push({name:s.name,group:gByName[s.name]||'',week:s.week,type:s.type,content:s.content});
-      });
-    }catch(e){L('⚠ localStorage解析失败: '+e);}
-    L('✅ 本地: '+local.length+' 条');
-    return local;
-  }).catch(function(e){
-    L('❌ 读取分组失败: '+e.message);
-    local=[];
-    return [];
-  });
-}
-
-function merge(){
-  var seen={}; merged=[];
-  cloud.forEach(function(r){
-    var nm=r['姓名']||'', wk=(r['第几周']||'').replace(/[^0-9]/g,'');
-    var tp=r['作业类型']||'', ct=r['作业内容']||'';
-    if(!nm||!wk)return;
-    var sig=nm+'|'+wk+'|'+tp+'|'+(ct||'').slice(0,40);
-    if(!seen[sig]){seen[sig]=1;merged.push({name:nm,group:r['组别']||'',week:parseInt(wk),type:tp,content:ct,src:'scf'});}
-  });
-  local.forEach(function(r){
-    var sig=r.name+'|'+r.week+'|'+r.type+'|'+(r.content||'').slice(0,40);
-    if(!seen[sig]){seen[sig]=1;merged.push({name:r.name,group:r.group,week:r.week,type:r.type,content:r.content,src:'local'});}
-  });
-  L('✅ 合并去重: '+merged.length+' 条');
-}
-
-function filterData(){
-  return merged.filter(function(r){
+function upd(){
+  var f=merged.filter(function(r){
     if(week!=='all'&&String(r.week)!==week)return false;
-    if(grp!=='all'&&r.group&&r.group!==grp)return false;
     return true;
   });
+  document.getElementById('nC').textContent=cloud.length;
+  document.getElementById('nL').textContent=local.length;
+  document.getElementById('nM').textContent=merged.length;
+  document.getElementById('nF').textContent=f.length;
 }
 
-function showStats(){
-  var f=filterData();
-  document.getElementById('nCloud').textContent=cloud.length;
-  document.getElementById('nLocal').textContent=local.length;
-  document.getElementById('nMerged').textContent=merged.length;
-  document.getElementById('nFiltered').textContent=f.length;
+function refresh(){
+  document.getElementById('log').textContent='';
+  document.getElementById('nC').textContent='...';
+  document.getElementById('nL').textContent='...';
+  document.getElementById('nM').textContent='...';
+  document.getElementById('nF').textContent='...';
+  load();
+}
+
+function load(){
+  var p1=new Promise(function(ok){
+    log('[fetch] 连接 SCF...');
+    var x=new XMLHttpRequest();
+    x.open('GET',SC+'?t='+Date.now(),true);
+    x.timeout=10000;
+    x.onload=function(){
+      if(x.status===200){
+        try{
+          var d=JSON.parse(x.responseText);
+          cloud=(d.records||[]).map(function(r){
+            return{
+              name:r['姓名']||'',
+              group:r['组别']||'',
+              week:parseInt((r['第几周']||'').replace(/[^0-9]/g,''))||0,
+              type:r['作业类型']||'',
+              content:r['作业内容']||''
+            };
+          });
+          log('[ok] 云端 '+cloud.length+' 条');
+        }catch(e){log('[err] JSON解析失败: '+e);cloud=[];}
+      }else{
+        log('[err] HTTP '+x.status+' '+x.statusText);
+        cloud=[];
+      }
+      ok();
+    };
+    x.onerror=function(){log('[err] 网络错误');cloud=[];ok();};
+    x.ontimeout=function(){log('[err] 超时');cloud=[];ok();};
+    x.send();
+  });
+
+  var p2=new Promise(function(ok){
+    log('[local] 读取 localStorage...');
+    try{
+      var raw=localStorage.getItem(LK);
+      if(raw){
+        var arr=JSON.parse(raw);
+        local=arr.map(function(s){
+          return{name:s.name||'',group:s.group||'',week:s.week||0,type:s.type||'',content:s.content||''};
+        });
+        log('[ok] 本地 '+local.length+' 条');
+      }else{
+        log('[warn] localStorage 无数据(键='+LK+')');
+        local=[];
+      }
+    }catch(e){log('[err] '+e);local=[];}
+    ok();
+  });
+
+  Promise.all([p1,p2]).then(function(){
+    // Merge with dedup
+    var seen={};merged=[];
+    cloud.forEach(function(r){
+      if(!r.name||!r.week)return;
+      var k=r.name+'|'+r.week+'|'+r.type+'|'+(r.content||'').slice(0,50);
+      if(!seen[k]){seen[k]=1;merged.push(Object.assign({src:'cloud'},r));}
+    });
+    local.forEach(function(r){
+      if(!r.name||!r.week)return;
+      var k=r.name+'|'+r.week+'|'+r.type+'|'+(r.content||'').slice(0,50);
+      if(!seen[k]){seen[k]=1;merged.push(Object.assign({src:'local'},r));}
+    });
+    log('[merge] 去重后 '+merged.length+' 条');
+    upd();
+  });
 }
 
 function doExport(){
-  var f=filterData();
-  if(!f.length){alert('当前筛选下无数据');return;}
-  var BOM='\uFEFF';
-  var hdr='姓名,组别,周次,类型,来源,内容\n';
+  var f=merged.filter(function(r){
+    if(week!=='all'&&String(r.week)!==week)return false;
+    return true;
+  });
+  if(!f.length){alert('无数据：云端='+cloud.length+' 本地='+local.length+' 合并='+merged.length+' 周='+week);return;}
+  var h='姓名,组别,周次,类型,来源,内容\n';
   var rows=f.map(function(r){
-    return r.name+','+r.group+',第'+r.week+'周,'+r.type+','+r.src+',"'+((r.content||'').replace(/"/g,'""').replace(/\n/g,' ').replace(/\r/g,''))+'"';
-  }).join('\n');
-  var blob=new Blob([BOM+hdr+rows],{type:'text/csv;charset=utf-8;'});
-  var a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='百日营导出_'+new Date().toISOString().slice(0,10)+'.csv';
-  a.click();URL.revokeObjectURL(a.href);
-  S('✅ 已导出 '+f.length+' 条');
-  L('导出完成: '+f.length+' 条');
+    return r.name+','+r.group+',第'+r.week+'周,'+r.type+','+r.src+',"'+((r.content||'').replace(/"/g,'""').replace(/\n/g,' '))+'"';
+  });
+  var b=new Blob(['\uFEFF'+h+rows.join('\n')],{type:'text/csv'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download='百日营_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  URL.revokeObjectURL(a.href);
+  alert('✅ 导出 '+f.length+' 条');
 }
 
 function exportAll(){
-  week='all';grp='all';
-  document.querySelectorAll('#weeks .chip,#groups .chip').forEach(function(c){c.classList.remove('active')});
-  document.querySelector('#weeks .chip,#groups .chip').classList.add('active');
-  showStats();
-  setTimeout(doExport,200);
+  week='all';
+  document.querySelectorAll('#wChips .chip').forEach(function(c){c.classList.remove('on')});
+  document.querySelector('#wChips .chip').classList.add('on');
+  upd();
+  setTimeout(doExport,300);
 }
 
-function refreshAll(){
-  L('════ 刷新数据 ════');
-  document.getElementById('nCloud').textContent='...';
-  document.getElementById('nLocal').textContent='...';
-  document.getElementById('nMerged').textContent='...';
-  document.getElementById('nFiltered').textContent='...';
-  S('刷新中...');
-  Promise.all([loadCloud(),loadLocal()]).then(function(){
-    merge(); showStats();
-    S('✅ 数据已刷新');
-  }).catch(function(e){
-    S('❌ 刷新失败: '+e);
-  });
-}
-
-// Init
-(function init(){
-  Promise.all([loadCloud(),loadLocal()]).then(function(){
-    merge(); showStats(); S('✅ 加载完成，选择筛选条件后导出');
-  }).catch(function(e){
-    S('❌ 加载失败: '+e);
-  });
-})();
+load();
 </script>
 </body>
 </html>
