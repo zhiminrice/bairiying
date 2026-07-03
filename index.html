@@ -992,7 +992,7 @@ textarea {
   </div>
 
   <div class="btn-row">
-    <button class="btn btn-primary" onclick="window.open("export.html","_blank")">📥 导出 CSV</button>
+    <button class="btn btn-primary" onclick="exportNow()">📥 导出 CSV</button>
     <button class="btn btn-secondary" onclick="window.open("export.html","_blank")">📋 复制文本</button>
   </div>
 
@@ -2216,39 +2216,51 @@ function bindExportChips() {
 
 function getExportData() {
   var results = [];
-  var localMap = getLocalMap();
-  var names = []; DATA.forEach(function(m) { if (names.indexOf(m.name) < 0) names.push(m.name); });
+  var seen = {};
+  var _en = function(s) { return (s||'').replace(/<br\s*\/?>/gi,'\n').replace(/\s+/g,' ').trim(); };
 
-  names.forEach(function(name) {
-    var m = DATA.find(function(d) { return d.name === name; });
-    if (!m) return;
-    if (_exportGroup !== 'all' && m.group !== _exportGroup) return;
-
-    for (var w = 1; w <= 14; w++) {
-      if (_exportWeek !== 'all' && String(w) !== _exportWeek) continue;
-
-      var wk = 'w' + w;
-      var a = m.assignments || {};
-      var types = { '本周作业': a[wk + '_homework'] || [], '本周分享': a[wk + '_sharing'] || [], '学员答疑': a[wk + '_qna'] || [] };
-      var localTypes = { '本周作业': (localMap[name + '::' + w + '::本周作业'] || []), '本周分享': (localMap[name + '::' + w + '::本周分享'] || []), '学员答疑': (localMap[name + '::' + w + '::学员答疑'] || []) };
-
-      var _en = function(s) { return (s||'').replace(/<br\s*\/?>/gi,'\n').replace(/\s+/g,' ').trim(); };
-      for (var t in types) {
-        if (_exportType !== 'all' && t !== _exportType) continue;
-        var _seenExport = {};
-        types[t].forEach(function(c) {
-          results.push({ name: name, group: m.group, week: w, type: t, content: c, source: 'embedded' });
-          _seenExport[_en(c)] = true;
-        });
-        localTypes[t].forEach(function(s) {
-          if (!_seenExport[_en(s.content)]) {
-            results.push({ name: name, group: m.group, week: w, type: t, content: s.content, source: 'local' });
-          }
-        });
-      }
-    }
+  // 1. 全局作业缓存 _relayRecordsFlat（页面加载时已合并 SCF + BITABLE）
+  (_relayRecordsFlat || []).forEach(function(r) {
+    if (_exportWeek !== 'all' && String(r.week) !== _exportWeek) return;
+    if (_exportType !== 'all' && r.type !== _exportType) return;
+    if (_exportGroup !== 'all' && r.group !== _exportGroup) return;
+    var sig = r.name + '|' + r.week + '|' + r.type + '|' + _en(r.content).slice(0, 60);
+    if (!seen[sig]) { seen[sig] = true; results.push({ name: r.name, group: r.group || '', week: r.week, type: r.type, content: r.content, source: 'relay' }); }
   });
+
+  // 2. localStorage 提交记录（submittedLocal）
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    var arr = raw ? JSON.parse(raw) : [];
+    arr.forEach(function(s) {
+      if (_exportWeek !== 'all' && String(s.week) !== _exportWeek) return;
+      if (_exportType !== 'all' && s.type !== _exportType) return;
+      if (_exportGroup !== 'all' && s.group !== _exportGroup) return;
+      var sig = (s.name || '') + '|' + (s.week || 0) + '|' + (s.type || '') + '|' + _en(s.content || '').slice(0, 60);
+      if (sig.indexOf('||') < 0 && !seen[sig]) { seen[sig] = true; results.push({ name: s.name, group: s.group || '', week: s.week, type: s.type, content: s.content, source: 'local' }); }
+    });
+  } catch(e) {}
+
   return results;
+}
+
+function exportNow() {
+  // 直接导出——强制刷新 _relayRecordsFlat 以确保拿到最新数据
+  fetchRelaySubmissions().then(function() {
+    var data = getExportData();
+    if (data.length === 0) { toast('没有可导出的数据，请先提交作业'); return; }
+    var BOM = '\uFEFF';
+    var hdr = '姓名,组别,周次,类型,来源,内容\n';
+    var rows = data.map(function(d) {
+      return (d.name||'') + ',' + (d.group||'') + ',第' + d.week + '周,' + (d.type||'') + ',' + (d.source||'') + ',"' + ((d.content||'').replace(/"/g,'""').replace(/\n/g,' ')) + '"';
+    }).join('\n');
+    var blob = new Blob([BOM + hdr + rows], { type: 'text/csv;charset=utf-8;' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '百日营导出_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click(); URL.revokeObjectURL(a.href);
+    toast('已导出 ' + data.length + ' 条');
+  });
 }
 
 function updateExportPreview() {
