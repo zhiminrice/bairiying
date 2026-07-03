@@ -799,7 +799,7 @@ textarea {
     <button class="week-tab" data-week="3">🔥 第3周<span class="wbadge">6/9</span></button>
     <button class="week-tab" data-week="4">第4周<span class="wbadge">6/17</span></button>
     <button class="week-tab" data-week="5">第5周<span class="wbadge">6/22</span></button>
-    <button class="week-tab" data-week="6">第6周<span class="wbadge">TBD</span></button>
+    <button class="week-tab" data-week="6">第6周<span class="wbadge">6/29</span></button>
     <button class="week-tab" data-week="7">第7周<span class="wbadge">TBD</span></button>
     <button class="week-tab" data-week="8">第8周<span class="wbadge">TBD</span></button>
     <button class="week-tab" data-week="9">第9周<span class="wbadge">TBD</span></button>
@@ -885,7 +885,7 @@ textarea {
       <button class="week-chip" data-week="9">📅 第9周<span class="date">待定</span></button>
       <button class="week-chip" data-week="8">📅 第8周<span class="date">待定</span></button>
       <button class="week-chip" data-week="7">📅 第7周<span class="date">待定</span></button>
-      <button class="week-chip" data-week="6">📅 第6周<span class="date">待定</span></button>
+      <button class="week-chip" data-week="6">📅 第6周<span class="date">6/29</span></button>
       <button class="week-chip" data-week="5">📅 第5周<span class="date">6/22</span></button>
       <button class="week-chip" data-week="4">📅 第4周<span class="date">6/17</span></button>
       <button class="week-chip selected" data-week="3">🔥 第3周<span class="date">6/9</span></button>
@@ -897,13 +897,11 @@ textarea {
   <div class="form-group">
     <label class="form-label">选择类型</label>
     <div class="type-chips" id="typeChips">
-      <button class="type-chip selected" data-type="作业">📝 本周作业</button>
-      <button class="type-chip" data-type="践行">💫 每日践行</button>
-      <button class="type-chip" data-type="分享">💬 本周分享</button>
-      <button class="type-chip" data-type="觉察">🔍 每日觉察</button>
-      <button class="type-chip" data-type="答疑">❓ 学员答疑</button>
+      <button class="type-chip selected" data-type="本周作业">📝 本周作业</button>
+      <button class="type-chip" data-type="本周分享">💬 本周分享</button>
+      <button class="type-chip" data-type="学员答疑">❓ 学员答疑</button>
     </div>
-    <input type="hidden" id="typeValue" value="作业">
+    <input type="hidden" id="typeValue" value="本周作业">
   </div>
   <div class="form-group">
     <label class="form-label"><span class="required">●</span> 作业内容</label>
@@ -971,11 +969,9 @@ textarea {
     <label class="form-label">选择类型</label>
     <div class="chip-group" id="exportTypes">
       <button class="chip selected" data-etype="all">📋 全部</button>
-      <button class="chip" data-etype="作业">📝 本周作业</button>
-      <button class="chip" data-etype="践行">💫 每日践行</button>
-      <button class="chip" data-etype="分享">💬 本周分享</button>
-      <button class="chip" data-etype="觉察">🔍 每日觉察</button>
-      <button class="chip" data-etype="答疑">❓ 学员答疑</button>
+      <button class="chip" data-etype="本周作业">📝 本周作业</button>
+      <button class="chip" data-etype="本周分享">💬 本周分享</button>
+      <button class="chip" data-etype="学员答疑">❓ 学员答疑</button>
     </div>
     <input type="hidden" id="exportType" value="all">
   </div>
@@ -1030,10 +1026,8 @@ textarea {
       <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:4px;">本次导入 · 类型</label>
       <div class="chip-group" id="importBatchType">
         <button class="chip selected" data-ibtype="本周作业">📝 本周作业</button>
-        <button class="chip" data-ibtype="每日践行">💫 每日践行</button>
-        <button class="chip" data-ibtype="每日觉察">🔍 每日觉察</button>
         <button class="chip" data-ibtype="本周分享">💬 本周分享</button>
-        <button class="chip" data-ibtype="综合">📋 综合（文档内含多种）</button>
+        <button class="chip" data-ibtype="学员答疑">❓ 学员答疑</button>
       </div>
       <input type="hidden" id="importBatchTypeVal" value="本周作业">
     </div>
@@ -1093,9 +1087,8 @@ textarea {
     <label class="form-label">点评类型</label>
     <div class="chip-group" id="reviewTypes">
       <button class="chip selected" data-rtype="本周作业">📝 本周作业</button>
-      <button class="chip" data-rtype="每日践行">💫 每日践行</button>
-      <button class="chip" data-rtype="每日觉察">🔍 每日觉察</button>
       <button class="chip" data-rtype="本周分享">💬 本周分享</button>
+      <button class="chip" data-rtype="学员答疑">❓ 学员答疑</button>
     </div>
     <input type="hidden" id="reviewType" value="本周作业">
   </div>
@@ -1423,22 +1416,57 @@ const BITABLE_DATA = {
 
 
 
-const ATTENDANCE_ALL = [{"week": 1, "weekLabel": "第1周", "date": "05/25（周一）", "刘瑛茹": 1, "张冬梅": 0, "喻荔": 1, "陈伟玲": 0, "黄语柔": 1, "刘艳红": 0, "林小媚": 1, "吴瑞乾": 1, "赵华海": 1, "杨艳辉": 1, "张惠金": 1, "黄爱优": 1, "周劭峥": 1, "刘彩丽": 1, "李瑞颜": 0, "杨敏": 1, "周文源": 1, "钟智敏": 1, "尤夏靖": 0, "王碧娟": 1, "黄学隆": 1, "郑诗韵": 1, "郑柳": 1, "莫燕青": 1, "刘师": 1, "王璐璐": 1, "毛梓晰": 1, "王鹏圣": 1, "庞晓冰": 1, "吴文迪": 1, "黄杰梅": 1, "周青艳": 1, "卢有珍": 1, "李季连": 1, "蔡学敏": 1, "谭丽韵": 1, "谭碧怡": 0, "蔡泽丽": 0, "黄海啦": 1, "余妙平": 0, "梁沛琪": 0, "冼兆明": 1, "李瑞娜": 1, "霍立韵": 1, "郑丹妮": 1, "麦瑞开": 1, "黄惠筠": 1, "宁小漫": 1, "刘水燕": 1, "谭燕英": 1, "吴玉华": 1, "张静雯": 1, "蔡小红": 1, "雷艳明": 1, "谢敏航": 1, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 1, "戴金梅": 0}, {"week": 2, "weekLabel": "第2周", "date": "06/03（周二）", "刘瑛茹": 1, "张冬梅": 0, "喻荔": 1, "陈伟玲": 0, "黄语柔": 1, "刘艳红": 1, "林小媚": 0, "吴瑞乾": 1, "赵华海": 1, "杨艳辉": 1, "张惠金": 1, "黄爱优": 1, "周劭峥": 1, "刘彩丽": 1, "李瑞颜": 0, "杨敏": 1, "周文源": 1, "钟智敏": 1, "尤夏靖": 0, "王碧娟": 0, "黄学隆": 1, "郑诗韵": 0, "郑柳": 1, "莫燕青": 1, "刘师": 1, "王璐璐": 1, "毛梓晰": 0, "王鹏圣": 0, "庞晓冰": 1, "吴文迪": 1, "黄杰梅": 0, "周青艳": 0, "卢有珍": 1, "李季连": 0, "蔡学敏": 1, "谭丽韵": 1, "谭碧怡": 0, "蔡泽丽": 0, "黄海啦": 1, "余妙平": 0, "梁沛琪": 1, "冼兆明": 0, "李瑞娜": 0, "霍立韵": 1, "郑丹妮": 1, "麦瑞开": 0, "黄惠筠": 1, "宁小漫": 0, "刘水燕": 1, "谭燕英": 1, "吴玉华": 1, "张静雯": 1, "蔡小红": 1, "雷艳明": 1, "谢敏航": 1, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 1, "戴金梅": 0}, {"week": 3, "weekLabel": "第3周", "date": "06/09（周二）", "刘瑛茹": 1, "张冬梅": 0, "喻荔": 0, "陈伟玲": 0, "黄语柔": 1, "刘艳红": 1, "林小媚": 0, "吴瑞乾": 1, "赵华海": 1, "杨艳辉": 1, "张惠金": 1, "黄爱优": 1, "周劭峥": 1, "刘彩丽": 1, "李瑞颜": 1, "杨敏": 1, "周文源": 1, "钟智敏": 1, "尤夏靖": 1, "王碧娟": 0, "黄学隆": 1, "郑诗韵": 1, "郑柳": 1, "莫燕青": 0, "刘师": 1, "王璐璐": 1, "毛梓晰": 0, "王鹏圣": 1, "庞晓冰": 1, "吴文迪": 1, "黄杰梅": 0, "周青艳": 0, "卢有珍": 1, "李季连": 0, "蔡学敏": 1, "谭丽韵": 1, "谭碧怡": 0, "蔡泽丽": 0, "黄海啦": 1, "余妙平": 0, "梁沛琪": 0, "冼兆明": 1, "李瑞娜": 1, "霍立韵": 1, "郑丹妮": 1, "麦瑞开": 0, "黄惠筠": 1, "宁小漫": 1, "刘水燕": 0, "谭燕英": 1, "吴玉华": 1, "张静雯": 1, "蔡小红": 0, "雷艳明": 1, "谢敏航": 1, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 1, "戴金梅": 0}, {"week": 4, "weekLabel": "第4周", "date": "06/17（周三）", "刘瑛茹": 1, "张冬梅": 0, "喻荔": 0, "陈伟玲": 0, "黄语柔": 0, "刘艳红": 0, "林小媚": 0, "吴瑞乾": 1, "赵华海": 0, "杨艳辉": 1, "张惠金": 1, "黄爱优": 1, "周劭峥": 1, "刘彩丽": 1, "李瑞颜": 1, "杨敏": 1, "周文源": 1, "钟智敏": 1, "尤夏靖": 1, "王碧娟": 1, "黄学隆": 1, "郑诗韵": 0, "郑柳": 1, "莫燕青": 0, "刘师": 1, "王璐璐": 1, "毛梓晰": 0, "王鹏圣": 0, "庞晓冰": 1, "吴文迪": 1, "黄杰梅": 0, "周青艳": 0, "卢有珍": 1, "李季连": 1, "蔡学敏": 1, "谭丽韵": 1, "谭碧怡": 0, "蔡泽丽": 1, "黄海啦": 1, "余妙平": 0, "梁沛琪": 0, "冼兆明": 0, "李瑞娜": 0, "霍立韵": 0, "郑丹妮": 1, "麦瑞开": 0, "黄惠筠": 1, "宁小漫": 0, "刘水燕": 0, "谭燕英": 1, "吴玉华": 1, "张静雯": 1, "蔡小红": 1, "雷艳明": 1, "谢敏航": 0, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 1, "戴金梅": 0}, {"week": 5, "weekLabel": "第5周", "date": "06/22（周日）", "刘瑛茹": 0, "张冬梅": 0, "喻荔": 0, "陈伟玲": 0, "黄语柔": 0, "刘艳红": 0, "林小媚": 0, "吴瑞乾": 0, "赵华海": 0, "杨艳辉": 0, "张惠金": 0, "黄爱优": 0, "周劭峥": 0, "刘彩丽": 0, "李瑞颜": 0, "杨敏": 0, "周文源": 0, "钟智敏": 0, "尤夏靖": 0, "王碧娟": 0, "黄学隆": 0, "郑诗韵": 0, "郑柳": 0, "莫燕青": 0, "刘师": 0, "王璐璐": 0, "毛梓晰": 0, "王鹏圣": 0, "庞晓冰": 0, "吴文迪": 0, "黄杰梅": 0, "周青艳": 0, "卢有珍": 0, "李季连": 0, "蔡学敏": 0, "谭丽韵": 0, "谭碧怡": 0, "蔡泽丽": 0, "黄海啦": 0, "余妙平": 0, "梁沛琪": 0, "冼兆明": 0, "李瑞娜": 0, "霍立韵": 0, "郑丹妮": 0, "麦瑞开": 0, "黄惠筠": 0, "宁小漫": 0, "刘水燕": 0, "谭燕英": 0, "吴玉华": 0, "张静雯": 0, "蔡小红": 0, "雷艳明": 0, "谢敏航": 0, "沈杨群": 0, "肖桂梅": 0, "邓琳": 0, "龙振荣": 0, "陈巧莲": 0, "吕培芝": 0, "戴金梅": 0}];
+// ====== ATTENDANCE DATA (from attendance.json, never hardcoded) ======
+let _attendanceData = null;
+const ATTENDANCE_CACHE_KEY = 'bairiying_attendance_cache';
+function loadAttendanceData() {
+  return fetch('attendance.json?t=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      _attendanceData = data;
+      try { localStorage.setItem(ATTENDANCE_CACHE_KEY, JSON.stringify(data)); } catch(e) {}
+      return data;
+    })
+    .catch(function(err) {
+      console.warn('[Attendance] Failed to load attendance.json, trying localStorage cache');
+      try {
+        var cached = localStorage.getItem(ATTENDANCE_CACHE_KEY);
+        if (cached) { _attendanceData = JSON.parse(cached); console.log('[Attendance] Loaded from localStorage cache'); return _attendanceData; }
+      } catch(e) {}
+      console.error('[Attendance] No cache available, attendance will be empty');
+      return [];
+    });
+}
+
 
 
 const LEADERS = {'1组':'刘瑛茹','2组':'杨艳辉','3组':'钟智敏','4组':'毛梓晰','5组':'蔡学敏','6组':'霍立韵','7组':'蔡小红'};
 const TOTALS = { awareness: 4, homework: 3, practice: 3 };
 
 // ====== GROUPS (from homework_submit.html) ======
-const GROUPS = {
+var GROUPS = {
   '1组': { leader:'刘瑛茹', members:['刘瑛茹','张冬梅','喻荔','陈伟玲','黄语柔','刘艳红','林小媚','吴瑞乾','赵华海'] },
   '2组': { leader:'杨艳辉', members:['杨艳辉','张惠金','黄爱优','周劭峥','刘彩丽','李瑞颜','杨敏','周文源'] },
   '3组': { leader:'钟智敏', members:['钟智敏','尤夏靖','王碧娟','黄学隆','郑诗韵','郑柳','莫燕青','刘师','王璐璐'] },
   '4组': { leader:'毛梓晰', members:['毛梓晰','王鹏圣','庞晓冰','吴文迪','黄杰梅','周青艳','卢有珍','李季连'] },
   '5组': { leader:'蔡学敏', members:['蔡学敏','谭丽韵','谭碧怡','蔡泽丽','黄海啦','余妙平','梁沛琪','冼兆明','李瑞娜'] },
   '6组': { leader:'霍立韵', members:['霍立韵','郑丹妮','麦瑞开','黄惠筠','宁小漫','刘水燕','谭燕英','吴玉华','张静雯'] },
-  '7组': { leader:'蔡小红', members:['蔡小红','雷艳明','谢敏航','沈杨群','肖桂梅','邓琳','龙振荣','陈巧莲','吕培芝'] }
+  '7组': { leader:'蔡小红', members:['蔡小红','雷艳明','谢敏航','沈杨群','肖桂梅','邓琳','龙振荣','陈巧莲','吕培芝','戴金梅'] }
 };
+
+// ====== GROUPS SYNC: async fetch from groups.json after page loads ======
+function syncGroupsFromJSON() {
+  fetch('groups.json?t=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      Object.keys(data).forEach(function(k) {
+        if (GROUPS[k]) { GROUPS[k].leader = data[k].leader; GROUPS[k].members = data[k].members; }
+        else { GROUPS[k] = data[k]; }
+      });
+      console.log('[Groups] Synced from groups.json: ' + Object.keys(data).length + ' groups');
+    })
+    .catch(function() { /* silent - hardcoded GROUPS is the fallback */ });
+}
 
 // ====== LOCAL STORAGE KEY ======
 const STORAGE_KEY = 'submittedLocal';
@@ -1628,8 +1656,8 @@ function renderSubmitted() {
 
   container.innerHTML = submitted.map(s => {
     const weekLabel = {1:'📌 第1周',2:'🌟 第2周',3:'🔥 第3周'}[s.week] || '第' + s.week + '周';
-    const typeColor = { '作业':'var(--success)', '践行':'var(--accent)', '分享':'var(--gold)', '觉察':'var(--muted)' }[s.type] || 'var(--success)';
-    const typeBg = { '作业':'var(--success-bg)', '践行':'var(--accent-light)', '分享':'var(--gold-light)', '觉察':'#f0ede8' }[s.type] || 'var(--success-bg)';
+    const typeColor = { '本周作业':'var(--success)', '本周分享':'var(--gold)', '学员答疑':'var(--muted)', '每日践行':'var(--accent)', '每日觉察':'var(--accent-light)' }[s.type] || 'var(--success)';
+    const typeBg = { '本周作业':'var(--success-bg)', '本周分享':'var(--gold-light)', '学员答疑':'#f0ede8', '每日践行':'var(--accent-light)', '每日觉察':'#f0ede8' }[s.type] || 'var(--success-bg)';
     return '<div class="submitted-item"><button class="si-delete" onclick="deleteEntry('+s.id+')">✕</button><div class="si-header"><span class="si-name">'+s.name+' <span style="font-size:11px;color:var(--muted);font-weight:400">'+s.group+' · '+s.time+'</span></span><div class="si-tags"><span class="si-tag" style="background:var(--accent-light);color:var(--accent)">'+weekLabel+'</span><span class="si-tag" style="background:'+typeBg+';color:'+typeColor+'">'+s.type+'</span></div></div><div class="si-preview">'+s.content+'</div></div>';
   }).join('');
 }
@@ -1741,7 +1769,7 @@ function getLocalSubmissionsMap() {
   
   // Merge BITABLE_DATA (legacy static data)
   if (typeof BITABLE_DATA !== 'undefined') {
-    var typeMap = { homework: '作业', practice: '践行', awareness: '觉察', sharing: '分享', qna: '答疑' };
+    var typeMap = { homework: '本周作业', practice: '每日践行', awareness: '每日觉察', sharing: '本周分享', qna: '学员答疑' };
     for (var name in BITABLE_DATA) {
       var weeks = BITABLE_DATA[name];
       for (var wkKey in weeks) {
@@ -1770,7 +1798,7 @@ function getLocalSubmissionsMap() {
 // Get local submission count for a member for a given week and category
 function getLocalCount(localMap, name, week, category) {
   // category: 'homework', 'practice', 'sharing', 'awareness'
-  const typeMap = { homework: '作业', practice: '践行', sharing: '分享', awareness: '觉察' };
+  const typeMap = { homework: '本周作业', practice: '每日践行', sharing: '本周分享', awareness: '每日觉察' };
   const typeCN = typeMap[category];
   if (!typeCN) return 0;
   const key = name + '::' + week + '::' + typeCN;
@@ -1788,7 +1816,7 @@ function resetLocalMap() { _localMap = null; }
 
 let activeGroup = 'all', activeFilter = 'all', searchQuery = '', activeWeek = 'all';
 
-function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();}); bindEvents(); setTimeout(renderAttendanceTable, 100); }
+function init() { renderGroupTabs(); fetchRelaySubmissions().then(function(){resetLocalMap();applyFilters();}); bindEvents(); loadAttendanceData(); setTimeout(renderAttendanceTable, 100); syncGroupsFromJSON(); }
 
 function renderGroupTabs() {
   const c = document.getElementById('groupTabs');
@@ -1805,11 +1833,11 @@ function _getW(m, w) {
   const hwLocal = getLocalCount(localMap, m.name, w, 'homework');
   const prLocal = getLocalCount(localMap, m.name, w, 'practice');
   const shLocal = getLocalCount(localMap, m.name, w, 'sharing');
-  // Merge attendance from ATTENDANCE_ALL (authoritative), DATA, and localStorage
+  // Merge attendance from _attendanceData (authoritative), DATA, and localStorage
   let attEmbedded = 0;
-  // 1. ATTENDANCE_ALL is the single source of truth
-  if (typeof ATTENDANCE_ALL !== 'undefined') {
-    var aw = ATTENDANCE_ALL.find(function(wd) { return wd.week === w; });
+  // 1. _attendanceData is the single source of truth
+  if (_attendanceData && _attendanceData.length) {
+    var aw = _attendanceData.find(function(wd) { return wd.week === w; });
     if (aw && aw[m.name] === 1) attEmbedded = 1;
   }
   // 2. Fallback to DATA embedded values
@@ -1907,7 +1935,7 @@ function showDetail(name) {
   const ws=getWeekScores(m);
   h+='<span style="font-size:11px;color:var(--muted)">作业:'+ws.homework+'/'+ws.homeworkMax+' 践行:'+ws.practice+'/'+ws.practiceMax+'</span></div>';
   let hc=false;
-  const weekDates={1:'5/21-5/25',2:'6/3',3:'6/9',4:'6/17',5:'6/22'};
+  const weekDates={1:'5/21-5/25',2:'6/3',3:'6/9',4:'6/17',5:'6/22',6:'6/29'};
   for(let w=14;w>=1;w--){
     if(activeWeek!=='all'&&activeWeek!==String(w))continue;
     const wk='w'+w, a=m.assignments;
@@ -2021,7 +2049,7 @@ function deleteRelayRecord(recordId, name, week, typeCN) {
   }).catch(function(e){ showToast('❌ 中继服务未连接'); });
 }
 function deleteAssignment(name, week, type, idx) {
-  if(!confirm('确定要删除 '+name+' 第'+week+'周的这条'+({'homework':'作业','practice':'践行','sharing':'分享','awareness':'觉察'})[type]+'吗？\n此操作可撤销（刷新页面恢复）。')) return;
+  if(!confirm('确定要删除 '+name+' 第'+week+'周的这条'+({'homework':'本周作业','practice':'每日践行','sharing':'本周分享','awareness':'每日觉察'})[type]+'吗？\n此操作可撤销（刷新页面恢复）。')) return;
   const m = DATA.find(function(d) { return d.name === name; });
   if (!m) return;
   const key = 'w' + week + '_' + type;
@@ -2081,9 +2109,14 @@ function renderAttendanceTable() {
   const names = DATA.map(function(m) { return m.name; });
   const nameGroup = {}; DATA.forEach(function(m) { nameGroup[m.name] = m.group; });
 
-  // Use ATTENDANCE_ALL as the primary attendance source
+  // Use _attendanceData as the primary attendance source
+  if (!_attendanceData || !_attendanceData.length) {
+    // Data not yet loaded, load and retry
+    loadAttendanceData().then(function() { renderAttendanceTable(); });
+    return;
+  }
   var allWeeks = [];
-  ATTENDANCE_ALL.forEach(function(w) { allWeeks.push(w.week); });
+  _attendanceData.forEach(function(w) { allWeeks.push(w.week); });
   allWeeks.sort(function(a,b) { return a - b; });
 
   // Load localStorage attendance as supplement
@@ -2095,13 +2128,13 @@ function renderAttendanceTable() {
 
   allWeeks.forEach(function(w, idx) {
     if (idx > 0) rows += '<tr class="att-separator"><td colspan="' + (2+names.length) + '"></td></tr>';
-    var weekData = ATTENDANCE_ALL.find(function(wd) { return wd.week === w; });
+    var weekData = (_attendanceData && _attendanceData.length) ? _attendanceData.find(function(wd) { return wd.week === w; }) : null;
     var wLabel = weekData ? weekData.weekLabel : ('第' + w + '周');
     var wDate = weekData ? weekData.date : '';
 
     var cells = names.map(function(n) {
       var v = 0;
-      // Check ATTENDANCE_ALL first
+      // Check _attendanceData first
       if (weekData && weekData[n] === 1) v = 1;
       // Check localStorage as supplement
       if (!v) {
@@ -2117,7 +2150,7 @@ function renderAttendanceTable() {
   rows += '<tr class="att-separator"><td colspan="' + (2+names.length) + '"></td></tr>';
   const totalCells = names.map(function(n) {
     var t = 0;
-    ATTENDANCE_ALL.forEach(function(wd) {
+    (_attendanceData||[]).forEach(function(wd) {
       if (wd[n] === 1) t++;
     });
     // Also count from localStorage
@@ -2215,6 +2248,20 @@ function getExportData() {
       }
     }
   });
+
+  // Merge SCF cloud submissions into export
+  try {
+    var scfReq = new XMLHttpRequest();
+    scfReq.open('GET', RELAY_URL + '/submissions', false);
+    scfReq.send();
+    if (scfReq.status === 200) {
+      (JSON.parse(scfReq.responseText).records || []).forEach(function(r) {
+        var rn = r['姓名'] || ''; var rw = (r['第几周'] || '').replace(/[^0-9]/g, '');
+        var rt = r['作业类型'] || ''; var rc = r['作业内容'] || '';
+        if (rn && rw) results.push({ name: rn, group: r['组别'] || '', week: parseInt(rw), type: rt, content: rc, source: 'scf' });
+      });
+    }
+  } catch(e) { /* silent */ }
   return results;
 }
 
