@@ -897,13 +897,11 @@ textarea {
   <div class="form-group">
     <label class="form-label">选择类型</label>
     <div class="type-chips" id="typeChips">
-      <button class="type-chip selected" data-type="作业">📝 本周作业</button>
-      <button class="type-chip" data-type="践行">💫 每日践行</button>
-      <button class="type-chip" data-type="分享">💬 本周分享</button>
-      <button class="type-chip" data-type="觉察">🔍 每日觉察</button>
-      <button class="type-chip" data-type="答疑">❓ 学员答疑</button>
+      <button class="type-chip selected" data-type="本周作业">📝 本周作业</button>
+      <button class="type-chip" data-type="本周分享">💬 本周分享</button>
+      <button class="type-chip" data-type="学员答疑">❓ 学员答疑</button>
     </div>
-    <input type="hidden" id="typeValue" value="作业">
+    <input type="hidden" id="typeValue" value="本周作业">
   </div>
   <div class="form-group">
     <label class="form-label"><span class="required">●</span> 作业内容</label>
@@ -971,11 +969,9 @@ textarea {
     <label class="form-label">选择类型</label>
     <div class="chip-group" id="exportTypes">
       <button class="chip selected" data-etype="all">📋 全部</button>
-      <button class="chip" data-etype="作业">📝 本周作业</button>
-      <button class="chip" data-etype="践行">💫 每日践行</button>
-      <button class="chip" data-etype="分享">💬 本周分享</button>
-      <button class="chip" data-etype="觉察">🔍 每日觉察</button>
-      <button class="chip" data-etype="答疑">❓ 学员答疑</button>
+      <button class="chip" data-etype="本周作业">📝 本周作业</button>
+      <button class="chip" data-etype="本周分享">💬 本周分享</button>
+      <button class="chip" data-etype="学员答疑">❓ 学员答疑</button>
     </div>
     <input type="hidden" id="exportType" value="all">
   </div>
@@ -1030,10 +1026,8 @@ textarea {
       <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:4px;">本次导入 · 类型</label>
       <div class="chip-group" id="importBatchType">
         <button class="chip selected" data-ibtype="本周作业">📝 本周作业</button>
-        <button class="chip" data-ibtype="每日践行">💫 每日践行</button>
-        <button class="chip" data-ibtype="每日觉察">🔍 每日觉察</button>
         <button class="chip" data-ibtype="本周分享">💬 本周分享</button>
-        <button class="chip" data-ibtype="综合">📋 综合（文档内含多种）</button>
+        <button class="chip" data-ibtype="学员答疑">❓ 学员答疑</button>
       </div>
       <input type="hidden" id="importBatchTypeVal" value="本周作业">
     </div>
@@ -1093,9 +1087,8 @@ textarea {
     <label class="form-label">点评类型</label>
     <div class="chip-group" id="reviewTypes">
       <button class="chip selected" data-rtype="本周作业">📝 本周作业</button>
-      <button class="chip" data-rtype="每日践行">💫 每日践行</button>
-      <button class="chip" data-rtype="每日觉察">🔍 每日觉察</button>
       <button class="chip" data-rtype="本周分享">💬 本周分享</button>
+      <button class="chip" data-rtype="学员答疑">❓ 学员答疑</button>
     </div>
     <input type="hidden" id="reviewType" value="本周作业">
   </div>
@@ -1642,8 +1635,8 @@ function renderSubmitted() {
 
   container.innerHTML = submitted.map(s => {
     const weekLabel = {1:'📌 第1周',2:'🌟 第2周',3:'🔥 第3周'}[s.week] || '第' + s.week + '周';
-    const typeColor = { '作业':'var(--success)', '践行':'var(--accent)', '分享':'var(--gold)', '觉察':'var(--muted)' }[s.type] || 'var(--success)';
-    const typeBg = { '作业':'var(--success-bg)', '践行':'var(--accent-light)', '分享':'var(--gold-light)', '觉察':'#f0ede8' }[s.type] || 'var(--success-bg)';
+    const typeColor = { '本周作业':'var(--success)', '本周分享':'var(--gold)', '学员答疑':'var(--muted)' }[s.type] || 'var(--success)';
+    const typeBg = { '本周作业':'var(--success-bg)', '本周分享':'var(--gold-light)', '学员答疑':'#f0ede8' }[s.type] || 'var(--success-bg)';
     return '<div class="submitted-item"><button class="si-delete" onclick="deleteEntry('+s.id+')">✕</button><div class="si-header"><span class="si-name">'+s.name+' <span style="font-size:11px;color:var(--muted);font-weight:400">'+s.group+' · '+s.time+'</span></span><div class="si-tags"><span class="si-tag" style="background:var(--accent-light);color:var(--accent)">'+weekLabel+'</span><span class="si-tag" style="background:'+typeBg+';color:'+typeColor+'">'+s.type+'</span></div></div><div class="si-preview">'+s.content+'</div></div>';
   }).join('');
 }
@@ -1755,7 +1748,7 @@ function getLocalSubmissionsMap() {
   
   // Merge BITABLE_DATA (legacy static data)
   if (typeof BITABLE_DATA !== 'undefined') {
-    var typeMap = { homework: '作业', practice: '践行', awareness: '觉察', sharing: '分享', qna: '答疑' };
+    var typeMap = { homework: '本周作业', practice: '本周分享', awareness: '学员答疑', sharing: '本周分享', qna: '学员答疑' };
     for (var name in BITABLE_DATA) {
       var weeks = BITABLE_DATA[name];
       for (var wkKey in weeks) {
@@ -1784,7 +1777,7 @@ function getLocalSubmissionsMap() {
 // Get local submission count for a member for a given week and category
 function getLocalCount(localMap, name, week, category) {
   // category: 'homework', 'practice', 'sharing', 'awareness'
-  const typeMap = { homework: '作业', practice: '践行', sharing: '分享', awareness: '觉察' };
+  const typeMap = { homework: '本周作业', practice: '本周分享', sharing: '本周分享', awareness: '学员答疑' };
   const typeCN = typeMap[category];
   if (!typeCN) return 0;
   const key = name + '::' + week + '::' + typeCN;
@@ -2035,7 +2028,7 @@ function deleteRelayRecord(recordId, name, week, typeCN) {
   }).catch(function(e){ showToast('❌ 中继服务未连接'); });
 }
 function deleteAssignment(name, week, type, idx) {
-  if(!confirm('确定要删除 '+name+' 第'+week+'周的这条'+({'homework':'作业','practice':'践行','sharing':'分享','awareness':'觉察'})[type]+'吗？\n此操作可撤销（刷新页面恢复）。')) return;
+  if(!confirm('确定要删除 '+name+' 第'+week+'周的这条'+({'homework':'本周作业','practice':'本周分享','sharing':'本周分享','awareness':'学员答疑'})[type]+'吗？\n此操作可撤销（刷新页面恢复）。')) return;
   const m = DATA.find(function(d) { return d.name === name; });
   if (!m) return;
   const key = 'w' + week + '_' + type;
@@ -2210,8 +2203,8 @@ function getExportData() {
 
       var wk = 'w' + w;
       var a = m.assignments || {};
-      var types = { '作业': a[wk + '_homework'] || [], '践行': a[wk + '_practice'] || [], '分享': a[wk + '_sharing'] || [], '觉察': a[wk + '_awareness'] || [], '答疑': a[wk + '_qna'] || [] };
-      var localTypes = { '作业': (localMap[name + '::' + w + '::作业'] || []), '践行': (localMap[name + '::' + w + '::践行'] || []), '分享': (localMap[name + '::' + w + '::分享'] || []), '觉察': (localMap[name + '::' + w + '::觉察'] || []), '答疑': (localMap[name + '::' + w + '::答疑'] || []) };
+      var types = { '本周作业': a[wk + '_homework'] || [], '本周分享': a[wk + '_sharing'] || [], '学员答疑': a[wk + '_qna'] || [] };
+      var localTypes = { '本周作业': (localMap[name + '::' + w + '::本周作业'] || []), '本周分享': (localMap[name + '::' + w + '::本周分享'] || []), '学员答疑': (localMap[name + '::' + w + '::学员答疑'] || []) };
 
       var _en = function(s) { return (s||'').replace(/<br\s*\/?>/gi,'\n').replace(/\s+/g,' ').trim(); };
       for (var t in types) {
