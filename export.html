@@ -2,309 +2,226 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>百日营 · 数据导出</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
 <style>
-  .export-page { max-width: 520px; margin: 0 auto; padding: 20px 16px 90px; }
-  .export-card { background: #fff; border-radius: 14px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(139,90,43,0.08); }
-  .export-card h3 { font-family: 'Noto Serif SC', serif; color: #8B5A2B; margin: 0 0 12px 0; }
-  .stat-row { display: flex; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
-  .stat-item { flex: 1; min-width: 80px; text-align: center; padding: 12px 8px; background: #FBF8F4; border-radius: 10px; }
-  .stat-num { font-size: 24px; font-weight: 700; color: #B87333; }
-  .stat-lbl { font-size: 11px; color: #7A6B5D; margin-top: 4px; }
-  .btn { display: inline-block; padding: 10px 20px; border-radius: 10px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; margin: 4px; }
-  .btn-primary { background: linear-gradient(135deg, #B87333, #D4943A); color: #fff; width: 100%; font-size: 15px; padding: 13px; }
-  .btn-outline { background: #fff; border: 1.5px solid #B87333; color: #B87333; }
-  .status { font-size: 13px; color: #7A6B5D; text-align: center; margin-top: 12px; }
-  .log { font-size: 12px; color: #A89888; margin-top: 8px; white-space: pre-wrap; max-height: 200px; overflow-y: auto; background: #FBF8F4; border-radius: 8px; padding: 10px; }
-  .filter-wrap { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
-  .chip { padding: 6px 14px; border-radius: 20px; border: 1.5px solid #E8DFD4; background: #fff; font-size: 13px; cursor: pointer; color: #7A6B5D; }
-  .chip.active { background: #B87333; color: #fff; border-color: #B87333; }
+body{font-family:'Noto Sans SC',system-ui,sans-serif;background:#FBF8F4;margin:0;padding:0}
+.export-page{max-width:520px;margin:0 auto;padding:20px 16px 100px}
+h2{font-family:'Noto Serif SC',serif;color:#8B5A2B;text-align:center;margin-bottom:20px}
+.card{background:#fff;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(139,90,43,0.08)}
+.card h3{color:#8B5A2B;margin:0 0 10px 0;font-size:15px}
+.flex-row{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:6px 14px;border-radius:20px;border:1.5px solid #E8DFD4;background:#fff;font-size:13px;cursor:pointer;color:#7A6B5D}
+.chip.active{background:#B87333;color:#fff;border-color:#B87333}
+.stats{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+.stat{flex:1;min-width:70px;text-align:center;padding:10px;background:#FBF8F4;border-radius:10px}
+.stat .num{font-size:22px;font-weight:700;color:#B87333}
+.stat .lbl{font-size:10px;color:#7A6B5D;margin-top:3px}
+.btn{padding:12px 20px;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer}
+.btn-primary{background:linear-gradient(135deg,#B87333,#D4943A);color:#fff;width:100%;font-size:15px;padding:14px}
+.btn-sm{background:#fff;border:1.5px solid #B87333;color:#B87333;flex:1;font-size:13px;padding:8px}
+#log{margin-top:10px;font-size:12px;color:#3D2E1E;white-space:pre-wrap;max-height:260px;overflow-y:auto;background:#FBF8F4;border-radius:8px;padding:10px;line-height:1.6}
+#status{font-size:13px;color:#7A6B5D;text-align:center;margin-top:10px}
+a{color:#B87333;text-decoration:none}
 </style>
 </head>
 <body>
 <div class="export-page">
-  <h2 style="font-family:'Noto Serif SC',serif;color:#8B5A2B;text-align:center;margin-bottom:20px">📊 百日营数据导出</h2>
-  
-  <!-- Filter -->
-  <div class="export-card">
-    <h3>筛选条件</h3>
-    <div style="font-size:12px;color:#A89888;margin-bottom:8px">周次</div>
-    <div class="filter-wrap" id="weekFilter">
-      <button class="chip active" data-w="all">全部</button>
-    </div>
-    <div style="font-size:12px;color:#A89888;margin-bottom:8px;margin-top:10px">组别</div>
-    <div class="filter-wrap" id="groupFilter">
-      <button class="chip active" data-g="all">全部</button>
-    </div>
-  </div>
+<h2>📊 数据导出中心</h2>
 
-  <!-- Stats -->
-  <div class="export-card">
-    <h3>数据概览</h3>
-    <div class="stat-row">
-      <div class="stat-item"><div class="stat-num" id="statScf">--</div><div class="stat-lbl">云端作业</div></div>
-      <div class="stat-item"><div class="stat-num" id="statLocal">--</div><div class="stat-lbl">本地作业</div></div>
-      <div class="stat-item"><div class="stat-num" id="statTotal">--</div><div class="stat-lbl">选中总计</div></div>
-    </div>
-    <div class="status" id="status">准备就绪，点击下方按钮导出</div>
-    <div class="log" id="log" style="display:none"></div>
-  </div>
+<div class="card">
+  <h3>🔍 筛选</h3>
+  <div style="font-size:12px;color:#A89888;margin-bottom:6px">周次</div>
+  <div class="flex-row" id="weeks"></div>
+  <div style="font-size:12px;color:#A89888;margin-bottom:6px;margin-top:10px">组别</div>
+  <div class="flex-row" id="groups"></div>
+</div>
 
-  <!-- Buttons -->
-  <div class="export-card">
-    <h3>导出操作</h3>
-    <button class="btn btn-primary" onclick="refreshAndExport()">📥 刷新数据并导出 CSV</button>
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button class="btn btn-outline" style="flex:1" onclick="exportCSV()">导出 CSV</button>
-      <button class="btn btn-outline" style="flex:1" onclick="copyToClipboard()">📋 复制摘要</button>
-    </div>
+<div class="card">
+  <h3>📈 数据概览</h3>
+  <div class="stats">
+    <div class="stat"><div class="num" id="nCloud">--</div><div class="lbl">云端(SCF)</div></div>
+    <div class="stat"><div class="num" id="nLocal">--</div><div class="lbl">本地存储</div></div>
+    <div class="stat"><div class="num" id="nMerged">--</div><div class="lbl">合并去重</div></div>
+    <div class="stat"><div class="num" id="nFiltered">--</div><div class="lbl">当前筛选</div></div>
   </div>
-  
-  <!-- Back -->
-  <div style="text-align:center;margin-bottom:20px">
-    <a href="./" style="color:#B87333;text-decoration:none;font-size:14px">← 返回仪表盘</a>
+  <div id="status">正在加载数据...</div>
+  <div id="log"></div>
+</div>
+
+<div class="card">
+  <h3>💾 导出</h3>
+  <button class="btn btn-primary" onclick="doExport()">📥 导出 CSV（含当前筛选）</button>
+  <div class="flex-row" style="margin-top:8px">
+    <button class="btn btn-sm" onclick="refreshAll()">🔄 刷新全部数据</button>
+    <button class="btn btn-sm" onclick="exportAll()">📋 导出全部(不过滤)</button>
   </div>
 </div>
 
+<div style="text-align:center"><a href="./">← 返回仪表盘</a></div>
+</div>
+
 <script>
-var RELAY_URL = 'https://1430780242-0nq7px6f3u.ap-shanghai.tencentscf.com';
-var STORAGE_KEY = 'submittedLocal';
-var allResults = [];
-var scfData = [];
-var localData = [];
-var activeWeek = 'all', activeGroup = 'all';
+var RELAY='https://1430780242-0nq7px6f3u.ap-shanghai.tencentscf.com';
+var KEY='submittedLocal';
+var cloud=[], local=[], merged=[];
+var week='all', grp='all';
 
-// Type name mapping
-var TYPE_ALIASES = {
-  '本周作业': ['本周作业', '作业', 'homework'],
-  '每日践行': ['每日践行', '践行', 'practice'],
-  '本周分享': ['本周分享', '分享', 'sharing'],
-  '每日觉察': ['每日觉察', '觉察', 'awareness'],
-  '学员答疑': ['学员答疑', '答疑', 'qna']
-};
+function L(s){
+  var el=document.getElementById('log');
+  var t=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  el.textContent+='['+t+'] '+s+'\n';
+  el.scrollTop=el.scrollHeight;
+}
+function S(t){document.getElementById('status').textContent=t;}
 
-function log(msg) {
-  var el = document.getElementById('log');
-  el.style.display = 'block';
-  el.textContent += msg + '\n';
-  el.scrollTop = el.scrollHeight;
+// Build chips
+(function(){
+  var wh='<button class="chip active" onclick="pickWeek(\"all\",this)">全部</button>';
+  for(var w=1;w<=14;w++) wh+='<button class="chip" onclick="pickWeek(\"'+w+'\",this)">第'+w+'周</button>';
+  document.getElementById('weeks').innerHTML=wh;
+})();
+
+fetch('groups.json').then(function(r){return r.json();}).then(function(g){
+  var gh='<button class="chip active" onclick="pickGroup(\"all\",this)">全部</button>';
+  Object.keys(g).sort().forEach(function(k){
+    gh+='<button class="chip" onclick="pickGroup(\"'+k+'\",this)">'+k+'('+g[k].members.length+')</button>';
+  });
+  document.getElementById('groups').innerHTML=gh;
+}).catch(function(e){L('⚠ 加载分组失败: '+e);});
+
+function pickWeek(v,el){
+  document.querySelectorAll('#weeks .chip').forEach(function(c){c.classList.remove('active')});
+  el.classList.add('active'); week=v; showStats();
+}
+function pickGroup(v,el){
+  document.querySelectorAll('#groups .chip').forEach(function(c){c.classList.remove('active')});
+  el.classList.add('active'); grp=v; showStats();
+}
+
+function loadCloud(){
+  L('正在连接云端 SCF ...');
+  return fetch(RELAY+'/submissions')
+    .then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    })
+    .then(function(d){
+      cloud=d.records||[];
+      L('✅ 云端: '+cloud.length+' 条');
+      return cloud;
+    })
+    .catch(function(e){
+      L('❌ 云端失败: '+e.message);
+      cloud=[];
+      return [];
+    });
+}
+
+function loadLocal(){
+  L('正在读取本地存储...');
+  return fetch('groups.json').then(function(r){return r.json();}).then(function(gmap){
+    var gByName={};
+    Object.keys(gmap).forEach(function(k){
+      gmap[k].members.forEach(function(m){gByName[m]=k;});
+    });
+    local=[];
+    try{
+      var raw=localStorage.getItem(KEY);
+      var arr=raw?JSON.parse(raw):[];
+      arr.forEach(function(s){
+        local.push({name:s.name,group:gByName[s.name]||'',week:s.week,type:s.type,content:s.content});
+      });
+    }catch(e){L('⚠ localStorage解析失败: '+e);}
+    L('✅ 本地: '+local.length+' 条');
+    return local;
+  }).catch(function(e){
+    L('❌ 读取分组失败: '+e.message);
+    local=[];
+    return [];
+  });
+}
+
+function merge(){
+  var seen={}; merged=[];
+  cloud.forEach(function(r){
+    var nm=r['姓名']||'', wk=(r['第几周']||'').replace(/[^0-9]/g,'');
+    var tp=r['作业类型']||'', ct=r['作业内容']||'';
+    if(!nm||!wk)return;
+    var sig=nm+'|'+wk+'|'+tp+'|'+(ct||'').slice(0,40);
+    if(!seen[sig]){seen[sig]=1;merged.push({name:nm,group:r['组别']||'',week:parseInt(wk),type:tp,content:ct,src:'scf'});}
+  });
+  local.forEach(function(r){
+    var sig=r.name+'|'+r.week+'|'+r.type+'|'+(r.content||'').slice(0,40);
+    if(!seen[sig]){seen[sig]=1;merged.push({name:r.name,group:r.group,week:r.week,type:r.type,content:r.content,src:'local'});}
+  });
+  L('✅ 合并去重: '+merged.length+' 条');
+}
+
+function filterData(){
+  return merged.filter(function(r){
+    if(week!=='all'&&String(r.week)!==week)return false;
+    if(grp!=='all'&&r.group&&r.group!==grp)return false;
+    return true;
+  });
+}
+
+function showStats(){
+  var f=filterData();
+  document.getElementById('nCloud').textContent=cloud.length;
+  document.getElementById('nLocal').textContent=local.length;
+  document.getElementById('nMerged').textContent=merged.length;
+  document.getElementById('nFiltered').textContent=f.length;
+}
+
+function doExport(){
+  var f=filterData();
+  if(!f.length){alert('当前筛选下无数据');return;}
+  var BOM='\uFEFF';
+  var hdr='姓名,组别,周次,类型,来源,内容\n';
+  var rows=f.map(function(r){
+    return r.name+','+r.group+',第'+r.week+'周,'+r.type+','+r.src+',"'+((r.content||'').replace(/"/g,'""').replace(/\n/g,' ').replace(/\r/g,''))+'"';
+  }).join('\n');
+  var blob=new Blob([BOM+hdr+rows],{type:'text/csv;charset=utf-8;'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='百日营导出_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();URL.revokeObjectURL(a.href);
+  S('✅ 已导出 '+f.length+' 条');
+  L('导出完成: '+f.length+' 条');
+}
+
+function exportAll(){
+  week='all';grp='all';
+  document.querySelectorAll('#weeks .chip,#groups .chip').forEach(function(c){c.classList.remove('active')});
+  document.querySelector('#weeks .chip,#groups .chip').classList.add('active');
+  showStats();
+  setTimeout(doExport,200);
+}
+
+function refreshAll(){
+  L('════ 刷新数据 ════');
+  document.getElementById('nCloud').textContent='...';
+  document.getElementById('nLocal').textContent='...';
+  document.getElementById('nMerged').textContent='...';
+  document.getElementById('nFiltered').textContent='...';
+  S('刷新中...');
+  Promise.all([loadCloud(),loadLocal()]).then(function(){
+    merge(); showStats();
+    S('✅ 数据已刷新');
+  }).catch(function(e){
+    S('❌ 刷新失败: '+e);
+  });
 }
 
 // Init
-(function() {
-  // Build week chips (1-14)
-  var wh = document.getElementById('weekFilter');
-  for (var w = 1; w <= 14; w++) {
-    var btn = document.createElement('button');
-    btn.className = 'chip';
-    btn.textContent = '第' + w + '周';
-    btn.dataset.w = String(w);
-    btn.onclick = function() { setWeek(this.dataset.w, this); };
-    wh.appendChild(btn);
-  }
-  
-  // Group chips will be built after loading groups.json
-  fetch('groups.json').then(function(r){ return r.json(); }).then(function(groups){
-    var gh = document.getElementById('groupFilter');
-    Object.keys(groups).sort().forEach(function(g){
-      var btn = document.createElement('button');
-      btn.className = 'chip';
-      btn.textContent = g + '(' + groups[g].members.length + '人)';
-      btn.dataset.g = g;
-      btn.onclick = function() { setGroup(this.dataset.g, this); };
-      gh.appendChild(btn);
-    });
-  }).catch(function(){});
-  
-  // Preload
-  loadAllData();
+(function init(){
+  Promise.all([loadCloud(),loadLocal()]).then(function(){
+    merge(); showStats(); S('✅ 加载完成，选择筛选条件后导出');
+  }).catch(function(e){
+    S('❌ 加载失败: '+e);
+  });
 })();
-
-function setWeek(w, el) {
-  document.querySelectorAll('#weekFilter .chip').forEach(function(c){ c.classList.remove('active'); });
-  el.classList.add('active');
-  activeWeek = w;
-  updateStats();
-}
-function setGroup(g, el) {
-  document.querySelectorAll('#groupFilter .chip').forEach(function(c){ c.classList.remove('active'); });
-  el.classList.add('active');
-  activeGroup = g;
-  updateStats();
-}
-
-function loadSCF() {
-  return fetch(RELAY_URL + '/submissions')
-    .then(function(r){ return r.json(); })
-    .then(function(data){ scfData = data.records || []; return scfData; });
-}
-
-function loadLocal() {
-  var groupsPromise = fetch('groups.json').then(function(r){ return r.json(); });
-  return groupsPromise.then(function(groups){
-    var gmap = {};
-    Object.keys(groups).forEach(function(gname){
-      groups[gname].members.forEach(function(m){ gmap[m] = gname; });
-    });
-    
-    localData = [];
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      var arr = raw ? JSON.parse(raw) : [];
-      arr.forEach(function(s){
-        localData.push({ name: s.name, group: gmap[s.name] || '', week: s.week, type: s.type, content: s.content, source: 'local' });
-      });
-    } catch(e) {}
-    
-    return localData;
-  });
-}
-
-function loadAllData() {
-  document.getElementById('status').textContent = '正在加载数据...';
-  log('开始加载...');
-  
-  Promise.all([loadSCF(), loadLocal()]).then(function(results){
-    scfData = results[0];
-    localData = results[1];
-    
-    // Merge into allResults
-    var seen = {};
-    allResults = [];
-    
-    scfData.forEach(function(r){
-      var rn = r['姓名'] || '';
-      var rw = (r['第几周'] || '').replace(/[^0-9]/g, '');
-      var rt = r['作业类型'] || '';
-      var rc = r['作业内容'] || '';
-      if (!rn || !rw) return;
-      var key = rn + '::' + rw + '::' + rt + '::' + (rc||'').substring(0,30);
-      if (!seen[key]) { seen[key] = true;
-        var rg = r['组别'] || '';
-        allResults.push({ name: rn, group: rg, week: parseInt(rw), type: rt, content: rc, source: 'scf' });
-      }
-    });
-    
-    localData.forEach(function(r){
-      var key = r.name + '::' + r.week + '::' + r.type + '::' + (r.content||'').substring(0,30);
-      if (!seen[key]) { seen[key] = true; allResults.push(r); }
-    });
-    
-    log('云端: ' + scfData.length + ' 条');
-    log('本地: ' + localData.length + ' 条');
-    log('合并去重: ' + allResults.length + ' 条');
-    
-    updateStats();
-    document.getElementById('status').textContent = '✅ 数据加载完成，共 ' + allResults.length + ' 条记录';
-  }).catch(function(err){
-    log('❌ 加载失败: ' + err);
-    document.getElementById('status').textContent = '❌ 数据加载失败，请刷新重试';
-  });
-}
-
-function getFiltered() {
-  return allResults.filter(function(r){
-    if (activeWeek !== 'all' && String(r.week) !== activeWeek) return false;
-    if (activeGroup !== 'all' && r.group !== '' && r.group !== activeGroup) return false;
-    return true;
-  });
-}
-
-function updateStats() {
-  var filtered = getFiltered();
-  var scfCount = scfData.filter(function(r){
-    if (activeWeek !== 'all') {
-      var rw = (r['第几周'] || '').replace(/[^0-9]/g, '');
-      if (rw !== activeWeek) return false;
-    }
-    return true;
-  }).length;
-  var localCount = localData.filter(function(r){
-    if (activeWeek !== 'all' && String(r.week) !== activeWeek) return false;
-    return true;
-  }).length;
-  
-  document.getElementById('statScf').textContent = scfCount;
-  document.getElementById('statLocal').textContent = localCount;
-  document.getElementById('statTotal').textContent = filtered.length;
-}
-
-function refreshAndExport() {
-  document.getElementById('status').textContent = '正在刷新...';
-  log('刷新数据中...');
-  Promise.all([loadSCF(), loadLocal()]).then(function(results){
-    scfData = results[0];
-    localData = results[1];
-    
-    var seen = {};
-    allResults = [];
-    scfData.forEach(function(r){
-      var rn = r['姓名'] || '';
-      var rw = (r['第几周'] || '').replace(/[^0-9]/g, '');
-      var rt = r['作业类型'] || '';
-      var rc = r['作业内容'] || '';
-      if (!rn || !rw) return;
-      var key = rn + '::' + rw + '::' + rt + '::' + (rc||'').substring(0,30);
-      if (!seen[key]) { seen[key] = true;
-        allResults.push({ name: rn, group: r['组别'] || '', week: parseInt(rw), type: rt, content: rc, source: 'scf' });
-      }
-    });
-    localData.forEach(function(r){
-      var key = r.name + '::' + r.week + '::' + r.type + '::' + (r.content||'').substring(0,30);
-      if (!seen[key]) { seen[key] = true; allResults.push(r); }
-    });
-    
-    updateStats();
-    document.getElementById('status').textContent = '✅ 刷新完成';
-    setTimeout(exportCSV, 300);
-  }).catch(function(err){
-    log('❌ ' + err);
-    document.getElementById('status').textContent = '❌ 刷新失败';
-  });
-}
-
-function exportCSV() {
-  var filtered = getFiltered();
-  if (filtered.length === 0) { alert('没有匹配的数据'); return; }
-  
-  var BOM = '\uFEFF';
-  var header = '姓名,组别,周次,类型,来源,内容\n';
-  var rows = filtered.map(function(d){
-    var safeContent = '"' + (d.content||'').replace(/"/g,'""').replace(/\n/g,' ').replace(/\r/g,'') + '"';
-    return d.name + ',' + d.group + ',第' + d.week + '周,' + d.type + ',' + d.source + ',' + safeContent;
-  }).join('\n');
-  
-  var blob = new Blob([BOM + header + rows], { type: 'text/csv;charset=utf-8;' });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = '百日营作业导出_' + new Date().toISOString().slice(0,10) + '.csv';
-  a.click();
-  URL.revokeObjectURL(url);
-  document.getElementById('status').textContent = '✅ 已导出 ' + filtered.length + ' 条记录';
-}
-
-function copyToClipboard() {
-  var filtered = getFiltered();
-  if (filtered.length === 0) { alert('没有匹配的数据'); return; }
-  
-  var text = filtered.map(function(d){
-    return '【' + d.name + ' · ' + d.group + ' · 第' + d.week + '周 · ' + d.type + '】\n' + (d.content||'');
-  }).join('\n\n---\n\n');
-  
-  navigator.clipboard.writeText(text).then(function(){
-    document.getElementById('status').textContent = '✅ 已复制 ' + filtered.length + ' 条记录';
-  }).catch(function(){
-    var ta = document.createElement('textarea'); ta.value = text;
-    ta.style.position='fixed';ta.style.opacity='0';
-    document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta);
-    document.getElementById('status').textContent = '✅ 已复制 ' + filtered.length + ' 条记录';
-  });
-}
 </script>
 </body>
 </html>
