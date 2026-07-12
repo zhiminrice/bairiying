@@ -2082,10 +2082,6 @@ function renderAttendanceTable() {
   const nameGroup = {}; DATA.forEach(function(m) { nameGroup[m.name] = m.group; });
 
   // Use ATTENDANCE_ALL as the primary attendance source
-  var allWeeks = [];
-  ATTENDANCE_ALL.forEach(function(w) { allWeeks.push(w.week); });
-  allWeeks.sort(function(a,b) { return a - b; });
-
   // Load localStorage attendance as supplement
   var attLocal = {};
   try { attLocal = JSON.parse(localStorage.getItem('attendanceLocal') || '{}'); } catch(e) {}
@@ -2093,11 +2089,11 @@ function renderAttendanceTable() {
   const headRow = '<tr><th>周次</th><th>日期</th>' + names.map(function(n) { return '<th style="font-size:10px">' + n + '</th>'; }).join('') + '</tr>';
   var rows = '';
 
-  allWeeks.forEach(function(w, idx) {
+  ATTENDANCE_ALL.forEach(function(weekData, idx) {
     if (idx > 0) rows += '<tr class="att-separator"><td colspan="' + (2+names.length) + '"></td></tr>';
-    var weekData = ATTENDANCE_ALL.find(function(wd) { return wd.week === w; });
-    var wLabel = weekData ? weekData.weekLabel : ('第' + w + '周');
-    var wDate = weekData ? weekData.date : '';
+    var w = weekData.week;
+    var wLabel = weekData.weekLabel;
+    var wDate = weekData.date;
 
     var cells = names.map(function(n) {
       var v = 0;
