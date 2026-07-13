@@ -2080,31 +2080,52 @@ function bindEvents() {
 function renderAttendanceTable() {
   const names = DATA.map(function(m) { return m.name; });
   const nameGroup = {}; DATA.forEach(function(m) { nameGroup[m.name] = m.group; });
+
+  // Use ATTENDANCE_ALL as the primary attendance source
+  // Load localStorage attendance as supplement
   var attLocal = {};
   try { attLocal = JSON.parse(localStorage.getItem('attendanceLocal') || '{}'); } catch(e) {}
 
   const headRow = '<tr><th>周次</th><th>日期</th>' + names.map(function(n) { return '<th style="font-size:10px">' + n + '</th>'; }).join('') + '</tr>';
   var rows = '';
 
-  // Iterate ALL entries directly - no deduping
   ATTENDANCE_ALL.forEach(function(weekData, idx) {
     if (idx > 0) rows += '<tr class="att-separator"><td colspan="' + (2+names.length) + '"></td></tr>';
+    var w = weekData.week;
+    var wLabel = weekData.weekLabel;
+    var wDate = weekData.date;
+
     var cells = names.map(function(n) {
-      var v = (weekData && weekData[n] === 1) ? 1 : 0;
-      if (!v) { var g = nameGroup[n]; if (g && attLocal[weekData.week+'::'+g] && attLocal[weekData.week+'::'+g][n] === true) v = 1; }
-      return '<td class="' + (v>=1?'at-yes':'at-no') + '">' + (v>=1?'✓':'✗') + '</td>';
+      var v = 0;
+      // Check ATTENDANCE_ALL first
+      if (weekData && weekData[n] === 1) v = 1;
+      // Check localStorage as supplement
+      if (!v) {
+        var g = nameGroup[n];
+        if (g && attLocal[w+'::'+g] && attLocal[w+'::'+g][n] === true) v = 1;
+      }
+      var cls = v >= 1 ? 'at-yes' : 'at-no';
+      return '<td class="' + cls + '">' + (v >= 1 ? '✓' : '✗') + '</td>';
     }).join('');
-    rows += '<tr><td><strong>' + weekData.weekLabel + '</strong></td><td class="col-date">' + weekData.date + '</td>' + cells + '</tr>';
+    rows += '<tr><td><strong>' + wLabel + '</strong></td><td class="col-date">' + wDate + '</td>' + cells + '</tr>';
   });
 
-  // Total row
   rows += '<tr class="att-separator"><td colspan="' + (2+names.length) + '"></td></tr>';
-  var total = names.map(function(n) {
-    var t=0; ATTENDANCE_ALL.forEach(function(wd){ if(wd[n]===1) t++; });
-    var g=nameGroup[n]; Object.keys(attLocal).forEach(function(k){ var p=k.split('::'); if(p[1]===g&&attLocal[k][n]===true) t++; });
-    var s2=ATTENDANCE_ALL.length; return '<td style="font-weight:700;color:' + (t>=s2?'var(--success)':t>0?'var(--warning)':'var(--danger)') + '">'+t+'/'+s2+'</td>';
+  const totalCells = names.map(function(n) {
+    var t = 0;
+    ATTENDANCE_ALL.forEach(function(wd) {
+      if (wd[n] === 1) t++;
+    });
+    // Also count from localStorage
+    var g = nameGroup[n];
+    Object.keys(attLocal).forEach(function(k) {
+      var parts = k.split('::');
+      if (parts[1] === g && attLocal[k][n] === true) t++;
+    });
+    var s2 = ATTENDANCE_ALL.length;
+    return '<td style="font-weight:700;color:' + (t>=s2?'var(--success)':t>0?'var(--warning)':'var(--danger)') + '">' + t + '/' + s2 + '</td>';
   }).join('');
-  rows += '<tr class="total-row"><td colspan="2" style="text-align:center;font-weight:700;">📊 累计</td>' + total + '</tr>';
+  rows += '<tr class="total-row"><td colspan="2" style="text-align:center;font-weight:700;">📊 累计</td>' + totalCells + '</tr>';
   document.getElementById('attTable').innerHTML = headRow + rows;
 }
 
