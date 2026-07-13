@@ -2083,7 +2083,7 @@ function renderAttendanceTable() {
 
   // Use ATTENDANCE_ALL as the primary attendance source
   var allWeeks = [];
-  ATTENDANCE_ALL.forEach(function(w,i) { allWeeks.push(i); });
+  ATTENDANCE_ALL.forEach(function(w) { allWeeks.push(w.week); });
   allWeeks.sort(function(a,b) { return a - b; });
 
   // Load localStorage attendance as supplement
@@ -2126,7 +2126,7 @@ function renderAttendanceTable() {
       var parts = k.split('::');
       if (parts[1] === g && attLocal[k][n] === true) t++;
     });
-    var s2 = ATTENDANCE_ALL.length;
+    var s2 = allWeeks.length;
     return '<td style="font-weight:700;color:' + (t>=s2?'var(--success)':t>0?'var(--warning)':'var(--danger)') + '">' + t + '/' + s2 + '</td>';
   }).join('');
   rows += '<tr class="total-row"><td colspan="2" style="text-align:center;font-weight:700;">📊 累计</td>' + totalCells + '</tr>';
